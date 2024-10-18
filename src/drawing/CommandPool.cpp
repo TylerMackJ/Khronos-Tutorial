@@ -1,7 +1,7 @@
 #include "CommandPool.hpp"
 
 #include "HelloTriangleApplication.hpp"
-#include "PhysicalDevice.hpp"
+#include "device/PhysicalDevice.hpp"
 
 CommandPool::CommandPool()
 {

@@ -4,7 +4,7 @@
 
 #include <algorithm>
 
-#include "PhysicalDevice.hpp"
+#include "device/PhysicalDevice.hpp"
 
 SwapChain::SwapChain()
 {

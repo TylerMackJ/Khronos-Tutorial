@@ -3,8 +3,8 @@
 #define GLFW_INCLUDE_VULKAN
 #include <GLFW/glfw3.h>
 
-#include "Instance.hpp"
-#include "Window.hpp"
+#include "setup/Instance.hpp"
+#include "setup/Window.hpp"
 
 class Surface
 {

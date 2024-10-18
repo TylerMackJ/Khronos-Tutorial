@@ -47,23 +47,40 @@ add_shaders(Kronos
 )
 
 add_executable(Kronos 
-    src/CommandBuffer.cpp
-    src/CommandPool.cpp
-    src/DebugMessenger.cpp
-    src/Framebuffers.cpp
-    src/GLFWInit.cpp
-    src/GraphicsPipeline.cpp
     src/HelloTriangleApplication.cpp
-    src/ImageViews.cpp
-    src/Instance.cpp
-    src/LogicalDevice.cpp
-    src/PhysicalDevice.cpp
-    src/RenderPass.cpp
-    src/Surface.cpp
-    src/SwapChain.cpp
-    src/SyncObjects.cpp
-    src/Window.cpp
+    src/HelloTriangleApplication.hpp
+    src/device/LogicalDevice.cpp
+    src/device/LogicalDevice.hpp
+    src/device/PhysicalDevice.cpp
+    src/device/PhysicalDevice.hpp
+    src/drawing/CommandBuffer.cpp
+    src/drawing/CommandBuffer.hpp
+    src/drawing/CommandPool.cpp
+    src/drawing/CommandPool.hpp
+    src/drawing/Framebuffers.cpp
+    src/drawing/Framebuffers.hpp
+    src/drawing/SyncObjects.cpp
+    src/drawing/SyncObjects.hpp
+    src/graphicsPipeline/GraphicsPipeline.cpp
+    src/graphicsPipeline/GraphicsPipeline.hpp
+    src/graphicsPipeline/RenderPass.cpp
+    src/graphicsPipeline/RenderPass.hpp
     src/main.cpp
+    src/presentation/ImageViews.cpp
+    src/presentation/ImageViews.hpp
+    src/presentation/Surface.cpp
+    src/presentation/Surface.hpp
+    src/presentation/SwapChain.cpp
+    src/presentation/SwapChain.hpp
+    src/setup/DebugMessenger.cpp
+    src/setup/DebugMessenger.hpp
+    src/setup/GLFWInit.cpp
+    src/setup/GLFWInit.hpp
+    src/setup/Instance.cpp
+    src/setup/Instance.hpp
+    src/setup/Window.cpp
+    src/setup/Window.hpp
 )
+target_include_directories(Kronos PRIVATE src)
 target_link_libraries(Kronos glfw)
 target_link_libraries(Kronos Vulkan::Vulkan)

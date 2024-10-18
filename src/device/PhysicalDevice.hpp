@@ -6,8 +6,8 @@
 #include <optional>
 #include <stdexcept>
 
-#include "Instance.hpp"
-#include "Surface.hpp"
+#include "setup/Instance.hpp"
+#include "presentation/Surface.hpp"
 
 class PhysicalDevice
 {

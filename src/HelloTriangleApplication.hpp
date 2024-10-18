@@ -2,21 +2,21 @@
 
 #include <vector>
 
-#include "DebugMessenger.hpp"
-#include "GLFWInit.hpp"
-#include "Instance.hpp"
-#include "LogicalDevice.hpp"
-#include "PhysicalDevice.hpp"
-#include "Surface.hpp"
-#include "Window.hpp"
-#include "SwapChain.hpp"
-#include "ImageViews.hpp"
-#include "RenderPass.hpp"
-#include "GraphicsPipeline.hpp"
-#include "Framebuffers.hpp"
-#include "CommandPool.hpp"
-#include "CommandBuffer.hpp"
-#include "SyncObjects.hpp"
+#include "setup/DebugMessenger.hpp"
+#include "setup/GLFWInit.hpp"
+#include "setup/Instance.hpp"
+#include "device/LogicalDevice.hpp"
+#include "device/PhysicalDevice.hpp"
+#include "presentation/Surface.hpp"
+#include "setup/Window.hpp"
+#include "presentation/SwapChain.hpp"
+#include "presentation/ImageViews.hpp"
+#include "graphicsPipeline/RenderPass.hpp"
+#include "graphicsPipeline/GraphicsPipeline.hpp"
+#include "drawing/Framebuffers.hpp"
+#include "drawing/CommandPool.hpp"
+#include "drawing/CommandBuffer.hpp"
+#include "drawing/SyncObjects.hpp"
 
 class HelloTriangleApplication
 {
