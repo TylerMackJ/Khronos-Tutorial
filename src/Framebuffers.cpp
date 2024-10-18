@@ -6,7 +6,7 @@ Framebuffers::Framebuffers()
 {
     swapChainFramebuffers.resize(HelloTriangleApplication::getSwapChain().getSwapChainImages().size());
 
-    for( size_t i = 0; i < swapChainFramebuffers.size(); i++ )
+    for( size_t i = 0; i < HelloTriangleApplication::getSwapChain().getSwapChainImages().size(); i++ )
     {
         VkImageView attachments[] =
         {
