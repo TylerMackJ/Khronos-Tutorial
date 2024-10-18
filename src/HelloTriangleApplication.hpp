@@ -38,6 +38,7 @@ private:
 	static std::unique_ptr<SyncObjects> syncObjects;
 
 public:
+	static const uint32_t MAX_FRAMES_IN_FLIGHT = 2;
 	static const uint32_t WIDTH = 800;
 	static const uint32_t HEIGHT = 600;
 
@@ -77,5 +78,7 @@ public:
 
 private:
 	static void drawFrame();
+
+	static uint32_t currentFrame;
 };
 

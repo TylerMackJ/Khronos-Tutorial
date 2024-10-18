@@ -3,18 +3,20 @@
 #define GLFW_INCLUDE_VULKAN
 #include <GLFW/glfw3.h>
 
+#include <vector>
+
 class SyncObjects
 {
 public:
     SyncObjects();
     ~SyncObjects();
 
-    VkSemaphore& getImageAvailableSemaphore() { return imageAvailableSemaphore; }
-    VkSemaphore& getRenderFinishedSemaphore() { return renderFinishedSemaphore; }
-    VkFence& getInFlightFence() { return inFlightFence; }
+    std::vector<VkSemaphore>& getImageAvailableSemaphores() { return imageAvailableSemaphores; }
+    std::vector<VkSemaphore>& getRenderFinishedSemaphores() { return renderFinishedSemaphores; }
+    std::vector<VkFence>& getInFlightFences() { return inFlightFences; }
 
 private:
-    VkSemaphore imageAvailableSemaphore;
-    VkSemaphore renderFinishedSemaphore;
-    VkFence inFlightFence;
+    std::vector<VkSemaphore> imageAvailableSemaphores;
+    std::vector<VkSemaphore> renderFinishedSemaphores;
+    std::vector<VkFence> inFlightFences;
 };

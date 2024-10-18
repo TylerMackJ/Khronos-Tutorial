@@ -4,6 +4,10 @@
 
 SyncObjects::SyncObjects()
 {
+    imageAvailableSemaphores.resize(HelloTriangleApplication::MAX_FRAMES_IN_FLIGHT);
+    renderFinishedSemaphores.resize(HelloTriangleApplication::MAX_FRAMES_IN_FLIGHT);
+    inFlightFences.resize(HelloTriangleApplication::MAX_FRAMES_IN_FLIGHT);
+
     VkSemaphoreCreateInfo semaphoreInfo = {};
     semaphoreInfo.sType = VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO;
 
@@ -11,17 +15,23 @@ SyncObjects::SyncObjects()
     fenceInfo.sType = VK_STRUCTURE_TYPE_FENCE_CREATE_INFO;
     fenceInfo.flags = VK_FENCE_CREATE_SIGNALED_BIT;
 
-    if (vkCreateSemaphore(HelloTriangleApplication::getLogicalDevice().getDeviceRef(), &semaphoreInfo, nullptr, &imageAvailableSemaphore) != VK_SUCCESS ||
-        vkCreateSemaphore(HelloTriangleApplication::getLogicalDevice().getDeviceRef(), &semaphoreInfo, nullptr, &renderFinishedSemaphore) != VK_SUCCESS ||
-        vkCreateFence(HelloTriangleApplication::getLogicalDevice().getDeviceRef(), &fenceInfo, nullptr, &inFlightFence) != VK_SUCCESS)
+    for (size_t i = 0; i < HelloTriangleApplication::MAX_FRAMES_IN_FLIGHT; i++)
     {
-        throw std::runtime_error("failed to create semaphores!");
+        if (vkCreateSemaphore(HelloTriangleApplication::getLogicalDevice().getDeviceRef(), &semaphoreInfo, nullptr, &imageAvailableSemaphores[i]) != VK_SUCCESS ||
+            vkCreateSemaphore(HelloTriangleApplication::getLogicalDevice().getDeviceRef(), &semaphoreInfo, nullptr, &renderFinishedSemaphores[i]) != VK_SUCCESS ||
+            vkCreateFence(HelloTriangleApplication::getLogicalDevice().getDeviceRef(), &fenceInfo, nullptr, &inFlightFences[i]) != VK_SUCCESS)
+        {
+            throw std::runtime_error("failed to create semaphores!");
+        }
     }
 }
 
 SyncObjects::~SyncObjects()
 {
-    vkDestroySemaphore(HelloTriangleApplication::getLogicalDevice().getDeviceRef(), imageAvailableSemaphore, nullptr);
-    vkDestroySemaphore(HelloTriangleApplication::getLogicalDevice().getDeviceRef(), renderFinishedSemaphore, nullptr);
-    vkDestroyFence(HelloTriangleApplication::getLogicalDevice().getDeviceRef(), inFlightFence, nullptr);
+    for (size_t i = 0; i < HelloTriangleApplication::MAX_FRAMES_IN_FLIGHT; i++)
+    {
+        vkDestroySemaphore(HelloTriangleApplication::getLogicalDevice().getDeviceRef(), imageAvailableSemaphores[i], nullptr);
+        vkDestroySemaphore(HelloTriangleApplication::getLogicalDevice().getDeviceRef(), renderFinishedSemaphores[i], nullptr);
+        vkDestroyFence(HelloTriangleApplication::getLogicalDevice().getDeviceRef(), inFlightFences[i], nullptr);
+    }
 }

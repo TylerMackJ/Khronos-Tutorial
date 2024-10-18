@@ -3,6 +3,8 @@
 #define GLFW_INCLUDE_VULKAN
 #include <GLFW/glfw3.h>
 
+#include <vector>
+
 class CommandBuffer
 {
 public:
@@ -11,8 +13,8 @@ public:
 
     void recordCommandBuffer(VkCommandBuffer commandBuffer, uint32_t imageIndex);
 
-    VkCommandBuffer& getCommandBuffer() { return commandBuffer; }
+    std::vector<VkCommandBuffer>& getCommandBuffers() { return commandBuffers; }
 
 private:
-    VkCommandBuffer commandBuffer;
+    std::vector<VkCommandBuffer> commandBuffers;
 };

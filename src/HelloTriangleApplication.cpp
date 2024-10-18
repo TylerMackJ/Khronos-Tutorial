@@ -22,6 +22,8 @@ std::unique_ptr<CommandPool> HelloTriangleApplication::commandPool = std::make_u
 std::unique_ptr<CommandBuffer> HelloTriangleApplication::commandBuffer = std::make_unique<CommandBuffer>();
 std::unique_ptr<SyncObjects> HelloTriangleApplication::syncObjects = std::make_unique<SyncObjects>();
 
+uint32_t HelloTriangleApplication::currentFrame = 0;
+
 void HelloTriangleApplication::run()
 {
 	while( !glfwWindowShouldClose( window->get() ) )
@@ -35,30 +37,30 @@ void HelloTriangleApplication::run()
 
 void HelloTriangleApplication::drawFrame()
 {
-	vkWaitForFences( getLogicalDevice().getDeviceRef(), 1, &getSyncObjects().getInFlightFence(), VK_TRUE, UINT64_MAX );
-	vkResetFences( getLogicalDevice().getDeviceRef(), 1, &getSyncObjects().getInFlightFence() );
+	vkWaitForFences( getLogicalDevice().getDeviceRef(), 1, &(getSyncObjects().getInFlightFences()[currentFrame]), VK_TRUE, UINT64_MAX );
+	vkResetFences( getLogicalDevice().getDeviceRef(), 1, &getSyncObjects().getInFlightFences()[currentFrame] );
 
 	uint32_t imageIndex;
-	vkAcquireNextImageKHR( getLogicalDevice().getDeviceRef(), getSwapChain().getSwapChainRef(), UINT64_MAX, getSyncObjects().getImageAvailableSemaphore(), VK_NULL_HANDLE, &imageIndex );
+	vkAcquireNextImageKHR( getLogicalDevice().getDeviceRef(), getSwapChain().getSwapChainRef(), UINT64_MAX, getSyncObjects().getImageAvailableSemaphores()[currentFrame], VK_NULL_HANDLE, &imageIndex );
 
-	vkResetCommandBuffer( getCommandBuffer().getCommandBuffer(), 0 );
+	vkResetCommandBuffer( getCommandBuffer().getCommandBuffers()[currentFrame], 0 );
 
-	getCommandBuffer().recordCommandBuffer( getCommandBuffer().getCommandBuffer(), imageIndex );
+	getCommandBuffer().recordCommandBuffer( getCommandBuffer().getCommandBuffers()[currentFrame], imageIndex );
 
 	VkSubmitInfo submitInfo = {};
 	submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
-	VkSemaphore waitSemaphores[] = { getSyncObjects().getImageAvailableSemaphore() };
+	VkSemaphore waitSemaphores[] = { getSyncObjects().getImageAvailableSemaphores()[currentFrame] };
 	VkPipelineStageFlags waitStages[] = { VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT };
 	submitInfo.waitSemaphoreCount = 1;
 	submitInfo.pWaitSemaphores = waitSemaphores;
 	submitInfo.pWaitDstStageMask = waitStages;
 	submitInfo.commandBufferCount = 1;
-	submitInfo.pCommandBuffers = &getCommandBuffer().getCommandBuffer();
-	VkSemaphore signalSemaphores[] = { getSyncObjects().getRenderFinishedSemaphore() };
+	submitInfo.pCommandBuffers = &getCommandBuffer().getCommandBuffers()[currentFrame];
+	VkSemaphore signalSemaphores[] = { getSyncObjects().getRenderFinishedSemaphores()[currentFrame] };
 	submitInfo.signalSemaphoreCount = 1;
 	submitInfo.pSignalSemaphores = signalSemaphores;
 
-	if( vkQueueSubmit( getLogicalDevice().getGraphicsQueueRef(), 1, &submitInfo, getSyncObjects().getInFlightFence() ) != VK_SUCCESS )
+	if( vkQueueSubmit( getLogicalDevice().getGraphicsQueueRef(), 1, &submitInfo, getSyncObjects().getInFlightFences()[currentFrame] ) != VK_SUCCESS )
 	{
 		throw std::runtime_error( "failed to submit draw command buffer!" );
 	}
@@ -74,6 +76,8 @@ void HelloTriangleApplication::drawFrame()
 	presentInfo.pResults = nullptr;
 
 	vkQueuePresentKHR( getLogicalDevice().getPresentQueueRef(), &presentInfo );
+
+	currentFrame = ( currentFrame + 1 ) % MAX_FRAMES_IN_FLIGHT;
 }
 
 std::vector<char> HelloTriangleApplication::readFile( const std::string& filename )
