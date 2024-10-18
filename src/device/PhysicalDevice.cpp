@@ -5,17 +5,19 @@
 
 #include "HelloTriangleApplication.hpp"
 
+using App = HelloTriangleApplication;
+
 PhysicalDevice::PhysicalDevice() :
 	physicalDevice( VK_NULL_HANDLE )
 {
 	uint32_t deviceCount = 0;
-	vkEnumeratePhysicalDevices( HelloTriangleApplication::getInstance().getInstanceRef(), &deviceCount, nullptr);
+	vkEnumeratePhysicalDevices( App::get().getInstance().getInstanceRef(), &deviceCount, nullptr);
 	if( deviceCount == 0 )
 	{
 		throw std::runtime_error( "failed to find GPUs with Vulkan support!" );
 	}
 	std::vector<VkPhysicalDevice> devices( deviceCount );
-	vkEnumeratePhysicalDevices( HelloTriangleApplication::getInstance().getInstanceRef(), &deviceCount, devices.data() );
+	vkEnumeratePhysicalDevices( App::get().getInstance().getInstanceRef(), &deviceCount, devices.data() );
 
 	std::multimap<int, VkPhysicalDevice> candidates;
 
@@ -98,7 +100,7 @@ PhysicalDevice::QueueFamilyIndices PhysicalDevice::findQueueFamilies( VkPhysical
 			indices.graphicsFamily = i;
 		}
 		VkBool32 presentSupport = false;
-		vkGetPhysicalDeviceSurfaceSupportKHR( device, i, HelloTriangleApplication::getSurface().getSurfaceRef(), &presentSupport);
+		vkGetPhysicalDeviceSurfaceSupportKHR( device, i, App::get().getSurface().getSurfaceRef(), &presentSupport);
 		if( presentSupport )
 		{
 			indices.presentFamily = i;
@@ -121,7 +123,7 @@ bool PhysicalDevice::checkDeviceExtensionSupport( VkPhysicalDevice device )
 	std::vector<VkExtensionProperties> availableExtensions( extensionCount );
 	vkEnumerateDeviceExtensionProperties( device, nullptr, &extensionCount, availableExtensions.data() );
 
-	std::set<std::string> requiredExtensions( HelloTriangleApplication::deviceExtensions.begin(), HelloTriangleApplication::deviceExtensions.end() );
+	std::set<std::string> requiredExtensions( App::get().deviceExtensions.begin(), App::get().deviceExtensions.end() );
 
 	for( const auto& extension : availableExtensions )
 	{
@@ -135,26 +137,26 @@ PhysicalDevice::SwapChainSupportDetails PhysicalDevice::querySwapChainSupport( V
 {
     SwapChainSupportDetails details;
 
-	vkGetPhysicalDeviceSurfaceCapabilitiesKHR( device, HelloTriangleApplication::getSurface().getSurfaceRef(),
+	vkGetPhysicalDeviceSurfaceCapabilitiesKHR( device, App::get().getSurface().getSurfaceRef(),
 											   &details.capabilities );
 
     uint32_t formatCount;
-    vkGetPhysicalDeviceSurfaceFormatsKHR( device, HelloTriangleApplication::getSurface().getSurfaceRef(), 
+    vkGetPhysicalDeviceSurfaceFormatsKHR( device, App::get().getSurface().getSurfaceRef(), 
                                           &formatCount, nullptr );
     if( formatCount > 0 )
     {
         details.formats.resize( formatCount );
-        vkGetPhysicalDeviceSurfaceFormatsKHR( device, HelloTriangleApplication::getSurface().getSurfaceRef(), 
+        vkGetPhysicalDeviceSurfaceFormatsKHR( device, App::get().getSurface().getSurfaceRef(), 
                                               &formatCount, details.formats.data() );
     }
 
     uint32_t presentModeCount;
-    vkGetPhysicalDeviceSurfacePresentModesKHR( device, HelloTriangleApplication::getSurface().getSurfaceRef(), 
+    vkGetPhysicalDeviceSurfacePresentModesKHR( device, App::get().getSurface().getSurfaceRef(), 
                                                &presentModeCount, nullptr );
     if( presentModeCount > 0 )
     {
         details.presentModes.resize( presentModeCount );
-        vkGetPhysicalDeviceSurfacePresentModesKHR( device, HelloTriangleApplication::getSurface().getSurfaceRef(), 
+        vkGetPhysicalDeviceSurfacePresentModesKHR( device, App::get().getSurface().getSurfaceRef(), 
                                                    &presentModeCount, details.presentModes.data() );
     }
 

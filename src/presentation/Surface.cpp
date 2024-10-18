@@ -4,9 +4,11 @@
 
 #include "HelloTriangleApplication.hpp"
 
+using App = HelloTriangleApplication;
+
 Surface::Surface()
 {
-	if( glfwCreateWindowSurface( HelloTriangleApplication::getInstance().getInstanceRef(), HelloTriangleApplication::getWindow().get(), nullptr, &surface) != VK_SUCCESS )
+	if( glfwCreateWindowSurface( App::get().getInstance().getInstanceRef(), App::get().getWindow().get(), nullptr, &surface) != VK_SUCCESS )
 	{
 		throw std::runtime_error( "failed to create window surface!" );
 	}
@@ -14,5 +16,5 @@ Surface::Surface()
 
 Surface::~Surface()
 {
-	vkDestroySurfaceKHR( HelloTriangleApplication::getInstance().getInstanceRef(), surface, nullptr);
+	vkDestroySurfaceKHR( App::get().getInstance().getInstanceRef(), surface, nullptr);
 }

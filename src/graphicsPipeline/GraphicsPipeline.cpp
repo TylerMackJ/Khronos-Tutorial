@@ -2,11 +2,13 @@
 
 #include "HelloTriangleApplication.hpp"
 
+using App = HelloTriangleApplication;
+
 #include <iostream>
 
 GraphicsPipeline::GraphicsPipeline() :
-    vertShaderModule( createShaderModule( HelloTriangleApplication::readFile( "shader.vert.spv" ) ) ),
-    fragShaderModule( createShaderModule( HelloTriangleApplication::readFile( "shader.frag.spv" ) ) )
+    vertShaderModule( createShaderModule( App::get().readFile( "shader.vert.spv" ) ) ),
+    fragShaderModule( createShaderModule( App::get().readFile( "shader.frag.spv" ) ) )
 {
     VkPipelineShaderStageCreateInfo vertShaderStageInfo{};
     vertShaderStageInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
@@ -98,7 +100,7 @@ GraphicsPipeline::GraphicsPipeline() :
     pipelineLayoutInfo.pushConstantRangeCount = 0;
     pipelineLayoutInfo.pPushConstantRanges = nullptr;
 
-    if( vkCreatePipelineLayout( HelloTriangleApplication::getLogicalDevice().getDeviceRef(), &pipelineLayoutInfo, nullptr, &pipelineLayout ) != VK_SUCCESS )
+    if( vkCreatePipelineLayout( App::get().getLogicalDevice().getDeviceRef(), &pipelineLayoutInfo, nullptr, &pipelineLayout ) != VK_SUCCESS )
     {
         throw std::runtime_error( "failed to create pipeline layout!" );
     }
@@ -116,24 +118,24 @@ GraphicsPipeline::GraphicsPipeline() :
     pipelineInfo.pColorBlendState = &colorBlending;
     pipelineInfo.pDynamicState = &dynamicState;
     pipelineInfo.layout = pipelineLayout;
-    pipelineInfo.renderPass = HelloTriangleApplication::getRenderPass().getRenderPass();
+    pipelineInfo.renderPass = App::get().getRenderPass().getRenderPass();
     pipelineInfo.subpass = 0;
     pipelineInfo.basePipelineHandle = VK_NULL_HANDLE;
     pipelineInfo.basePipelineIndex = -1;
 
-    if( vkCreateGraphicsPipelines( HelloTriangleApplication::getLogicalDevice().getDeviceRef(), VK_NULL_HANDLE, 1, &pipelineInfo, nullptr, &graphicsPipeline ) != VK_SUCCESS )
+    if( vkCreateGraphicsPipelines( App::get().getLogicalDevice().getDeviceRef(), VK_NULL_HANDLE, 1, &pipelineInfo, nullptr, &graphicsPipeline ) != VK_SUCCESS )
     {
         throw std::runtime_error( "failed to create graphics pipeline!" );
     }
 
-    vkDestroyShaderModule( HelloTriangleApplication::getLogicalDevice().getDeviceRef(), vertShaderModule, nullptr );
-    vkDestroyShaderModule( HelloTriangleApplication::getLogicalDevice().getDeviceRef(), fragShaderModule, nullptr );
+    vkDestroyShaderModule( App::get().getLogicalDevice().getDeviceRef(), vertShaderModule, nullptr );
+    vkDestroyShaderModule( App::get().getLogicalDevice().getDeviceRef(), fragShaderModule, nullptr );
 }
 
 GraphicsPipeline::~GraphicsPipeline()
 {
-    vkDestroyPipeline( HelloTriangleApplication::getLogicalDevice().getDeviceRef(), graphicsPipeline, nullptr );
-    vkDestroyPipelineLayout( HelloTriangleApplication::getLogicalDevice().getDeviceRef(), pipelineLayout, nullptr );
+    vkDestroyPipeline( App::get().getLogicalDevice().getDeviceRef(), graphicsPipeline, nullptr );
+    vkDestroyPipelineLayout( App::get().getLogicalDevice().getDeviceRef(), pipelineLayout, nullptr );
 }
 
 VkShaderModule GraphicsPipeline::createShaderModule( const std::vector<char>& code )
@@ -144,7 +146,7 @@ VkShaderModule GraphicsPipeline::createShaderModule( const std::vector<char>& co
     createInfo.pCode = reinterpret_cast< const uint32_t* >(code.data());
 
     VkShaderModule shaderModule;
-    if( vkCreateShaderModule( HelloTriangleApplication::getLogicalDevice().getDeviceRef(), &createInfo, nullptr, &shaderModule ) != VK_SUCCESS )
+    if( vkCreateShaderModule( App::get().getLogicalDevice().getDeviceRef(), &createInfo, nullptr, &shaderModule ) != VK_SUCCESS )
     {
         throw std::runtime_error( "failed to create shader module!" );
     }

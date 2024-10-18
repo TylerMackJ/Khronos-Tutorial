@@ -4,9 +4,11 @@
 
 #include "HelloTriangleApplication.hpp"
 
+using App = HelloTriangleApplication;
+
 LogicalDevice::LogicalDevice()
 {
-	PhysicalDevice::QueueFamilyIndices indices = HelloTriangleApplication::getPhysicalDevice().getQueueFamilyIndices();
+	PhysicalDevice::QueueFamilyIndices indices = App::get().getPhysicalDevice().getQueueFamilyIndices();
 
 	std::vector<VkDeviceQueueCreateInfo> queueCreateInfos;
 	std::set<uint32_t> uniqueQueueFamilies = { indices.graphicsFamily.value(), indices.presentFamily.value() };
@@ -29,19 +31,19 @@ LogicalDevice::LogicalDevice()
 	createInfo.pQueueCreateInfos = queueCreateInfos.data();
 	createInfo.queueCreateInfoCount = static_cast< uint32_t >(queueCreateInfos.size());
 	createInfo.pEnabledFeatures = &deviceFeatures;
-	createInfo.enabledExtensionCount = static_cast< uint32_t >(HelloTriangleApplication::deviceExtensions.size());
-	createInfo.ppEnabledExtensionNames = HelloTriangleApplication::deviceExtensions.data();
-	if( HelloTriangleApplication::enableValidationLayers )
+	createInfo.enabledExtensionCount = static_cast< uint32_t >(App::get().deviceExtensions.size());
+	createInfo.ppEnabledExtensionNames = App::get().deviceExtensions.data();
+	if( App::get().enableValidationLayers )
 	{
-		createInfo.enabledLayerCount = static_cast< uint32_t >(HelloTriangleApplication::validationLayers.size());
-		createInfo.ppEnabledLayerNames = HelloTriangleApplication::validationLayers.data();
+		createInfo.enabledLayerCount = static_cast< uint32_t >(App::get().validationLayers.size());
+		createInfo.ppEnabledLayerNames = App::get().validationLayers.data();
 	}
 	else
 	{
 		createInfo.enabledLayerCount = 0;
 	}
 
-	if( vkCreateDevice( HelloTriangleApplication::getPhysicalDevice().getPhysicalDeviceRef(), &createInfo, nullptr, &device) )
+	if( vkCreateDevice( App::get().getPhysicalDevice().getPhysicalDeviceRef(), &createInfo, nullptr, &device) )
 	{
 		throw std::runtime_error( "failed to create logical device!" );
 	}

@@ -4,13 +4,15 @@
 
 #include "HelloTriangleApplication.hpp"
 
+using App = HelloTriangleApplication;
+
 Window::Window() :
 	framebufferResized( false )
 {
 	glfwWindowHint( GLFW_CLIENT_API, GLFW_NO_API );
 	//glfwWindowHint( GLFW_RESIZABLE, GLFW_FALSE );
 
-	window = glfwCreateWindow( HelloTriangleApplication::WIDTH, HelloTriangleApplication::HEIGHT, "Vulkan", nullptr, nullptr );
+	window = glfwCreateWindow( App::get().WIDTH, App::get().HEIGHT, "Vulkan", nullptr, nullptr );
 	glfwSetWindowUserPointer( window, this );
 	glfwSetFramebufferSizeCallback( window, framebufferResizeCallback );
 }

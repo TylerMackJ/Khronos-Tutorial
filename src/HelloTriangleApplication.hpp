@@ -1,6 +1,7 @@
 #pragma once
 
 #include <vector>
+#include <iostream>
 
 #include "setup/DebugMessenger.hpp"
 #include "setup/GLFWInit.hpp"
@@ -20,66 +21,88 @@
 
 class HelloTriangleApplication
 {
-private:
-	static std::unique_ptr<GLFWInit> glfw;
-	static std::unique_ptr<Window> window;
-	static std::unique_ptr<Instance> instance;
-	static std::unique_ptr<DebugMessenger> debugMessenger;
-	static std::unique_ptr<Surface> surface;
-	static std::unique_ptr<PhysicalDevice> physicalDevice;
-	static std::unique_ptr<LogicalDevice> logicalDevice;
-	static std::unique_ptr<SwapChain> swapChain;
-	static std::unique_ptr<ImageViews> imageViews;
-	static std::unique_ptr<RenderPass> renderPass;
-	static std::unique_ptr<GraphicsPipeline> graphicsPipeline;
-	static std::unique_ptr<Framebuffers> framebuffers;
-	static std::unique_ptr<CommandPool> commandPool;
-	static std::unique_ptr<CommandBuffer> commandBuffer;
-	static std::unique_ptr<SyncObjects> syncObjects;
+private:	
+	static HelloTriangleApplication* singletonInstance;
+
+	HelloTriangleApplication() {}
 
 public:
-	static const uint32_t MAX_FRAMES_IN_FLIGHT = 2;
-	static const uint32_t WIDTH = 800;
-	static const uint32_t HEIGHT = 600;
+	HelloTriangleApplication(const HelloTriangleApplication&) = delete;
+	HelloTriangleApplication& operator=(const HelloTriangleApplication&) = delete;
 
-	static inline const std::vector<const char*> validationLayers = {
+	static HelloTriangleApplication& get()
+	{
+		if (singletonInstance == nullptr)
+		{
+			singletonInstance = new HelloTriangleApplication();
+		}
+
+		return *singletonInstance;
+	}
+
+	void init();
+
+	void run();
+
+private:
+	std::unique_ptr<GLFWInit> glfw;
+	std::unique_ptr<Window> window;
+	std::unique_ptr<Instance> instance;
+	std::unique_ptr<DebugMessenger> debugMessenger;
+	std::unique_ptr<Surface> surface;
+	std::unique_ptr<PhysicalDevice> physicalDevice;
+	std::unique_ptr<LogicalDevice> logicalDevice;
+	std::unique_ptr<SwapChain> swapChain;
+	std::unique_ptr<ImageViews> imageViews;
+	std::unique_ptr<RenderPass> renderPass;
+	std::unique_ptr<GraphicsPipeline> graphicsPipeline;
+	std::unique_ptr<Framebuffers> framebuffers;
+	std::unique_ptr<CommandPool> commandPool;
+	std::unique_ptr<CommandBuffer> commandBuffer;
+	std::unique_ptr<SyncObjects> syncObjects;
+
+public:
+	GLFWInit& getGLFWInit() { return *glfw; }
+	Window& getWindow() { return *window; }
+	Instance& getInstance() { return *instance; }
+	DebugMessenger& getDebugMessenger() { return *debugMessenger; }
+	Surface& getSurface() { return *surface; }
+	PhysicalDevice& getPhysicalDevice() { return *physicalDevice; }
+	LogicalDevice& getLogicalDevice() { return *logicalDevice; }
+	SwapChain& getSwapChain() { return *swapChain; }
+	ImageViews& getImageViews() { return *imageViews; }
+	RenderPass& getRenderPass() { return *renderPass; }
+	GraphicsPipeline& getGraphicsPipeline() { return *graphicsPipeline; }
+	Framebuffers& getFramebuffers() { return *framebuffers; }
+	CommandPool& getCommandPool() { return *commandPool; }
+	CommandBuffer& getCommandBuffer() { return *commandBuffer; }
+	SyncObjects& getSyncObjects() { return *syncObjects; }
+
+public:
+	const uint32_t MAX_FRAMES_IN_FLIGHT = 2;
+	const uint32_t WIDTH = 800;
+	const uint32_t HEIGHT = 600;
+
+	const std::vector<const char*> validationLayers = {
 		"VK_LAYER_KHRONOS_validation"
 	};
 	
-	static inline const std::vector<const char*> deviceExtensions = {
+	const std::vector<const char*> deviceExtensions = {
 		VK_KHR_SWAPCHAIN_EXTENSION_NAME
 	};
 
 #ifdef NDEBUG
-	static const bool enableValidationLayers = false;
+	const bool enableValidationLayers = false;
 #else
-	static const bool enableValidationLayers = true;
+	const bool enableValidationLayers = true;
 #endif // NDEBUG
-
-	static void run();
 
 	static std::vector<char> readFile( const std::string& filename );
 
-	static GLFWInit& getGLFWInit() { return *glfw; }
-	static Window& getWindow() { return *window; }
-	static Instance& getInstance() { return *instance; }
-	static DebugMessenger& getDebugMessenger() { return *debugMessenger; }
-	static Surface& getSurface() { return *surface; }
-	static PhysicalDevice& getPhysicalDevice() { return *physicalDevice; }
-	static LogicalDevice& getLogicalDevice() { return *logicalDevice; }
-	static SwapChain& getSwapChain() { return *swapChain; }
-	static ImageViews& getImageViews() { return *imageViews; }
-	static RenderPass& getRenderPass() { return *renderPass; }
-	static GraphicsPipeline& getGraphicsPipeline() { return *graphicsPipeline; }
-	static Framebuffers& getFramebuffers() { return *framebuffers; }
-	static CommandPool& getCommandPool() { return *commandPool; }
-	static CommandBuffer& getCommandBuffer() { return *commandBuffer; }
-	static SyncObjects& getSyncObjects() { return *syncObjects; }
-
 private:
-	static void drawFrame();
-	static void recreateSwapChain();
+	void drawFrame();
+	void recreateSwapChain();
 
-	static uint32_t currentFrame;
+	uint32_t currentFrame;
 };
 

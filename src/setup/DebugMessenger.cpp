@@ -4,15 +4,17 @@
 
 #include "HelloTriangleApplication.hpp"
 
+using App = HelloTriangleApplication;
+
 DebugMessenger::DebugMessenger() :
 	debugMessenger( VK_NULL_HANDLE )
 {
-	if( !HelloTriangleApplication::enableValidationLayers ) return;
+	if( !App::get().enableValidationLayers ) return;
 
 	VkDebugUtilsMessengerCreateInfoEXT createInfo;
 	populateDebugMessengerCreateInfo( createInfo );
 
-	if( CreateDebugUtilsMessengerEXT( HelloTriangleApplication::getInstance().getInstanceRef(), &createInfo, nullptr, &debugMessenger) != VK_SUCCESS )
+	if( CreateDebugUtilsMessengerEXT( App::get().getInstance().getInstanceRef(), &createInfo, nullptr, &debugMessenger) != VK_SUCCESS )
 	{
 		throw std::runtime_error( "failed to set up debug messenger!" );
 	}
@@ -20,9 +22,9 @@ DebugMessenger::DebugMessenger() :
 
 DebugMessenger::~DebugMessenger()
 {
-	if( HelloTriangleApplication::enableValidationLayers )
+	if( App::get().enableValidationLayers )
 	{
-		DestroyDebugUtilsMessengerEXT( HelloTriangleApplication::getInstance().getInstanceRef(), debugMessenger, nullptr );
+		DestroyDebugUtilsMessengerEXT( App::get().getInstance().getInstanceRef(), debugMessenger, nullptr );
 	}
 }
 

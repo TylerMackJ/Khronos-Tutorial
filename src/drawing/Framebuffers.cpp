@@ -2,27 +2,29 @@
 
 #include "HelloTriangleApplication.hpp"
 
+using App = HelloTriangleApplication;
+
 Framebuffers::Framebuffers() 
 {
-    swapChainFramebuffers.resize(HelloTriangleApplication::getSwapChain().getSwapChainImages().size());
+    swapChainFramebuffers.resize(App::get().getSwapChain().getSwapChainImages().size());
 
-    for( size_t i = 0; i < HelloTriangleApplication::getSwapChain().getSwapChainImages().size(); i++ )
+    for( size_t i = 0; i < App::get().getSwapChain().getSwapChainImages().size(); i++ )
     {
         VkImageView attachments[] =
         {
-            HelloTriangleApplication::getImageViews().getImageViews()[i]
+            App::get().getImageViews().getImageViews()[i]
         };
 
         VkFramebufferCreateInfo framebufferInfo{};
         framebufferInfo.sType = VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO;
-        framebufferInfo.renderPass = HelloTriangleApplication::getRenderPass().getRenderPass();
+        framebufferInfo.renderPass = App::get().getRenderPass().getRenderPass();
         framebufferInfo.attachmentCount = 1;
         framebufferInfo.pAttachments = attachments;
-        framebufferInfo.width = HelloTriangleApplication::getSwapChain().getSwapChainExtent().width;
-        framebufferInfo.height = HelloTriangleApplication::getSwapChain().getSwapChainExtent().height;
+        framebufferInfo.width = App::get().getSwapChain().getSwapChainExtent().width;
+        framebufferInfo.height = App::get().getSwapChain().getSwapChainExtent().height;
         framebufferInfo.layers = 1;
 
-        if( vkCreateFramebuffer( HelloTriangleApplication::getLogicalDevice().getDeviceRef(), &framebufferInfo, nullptr, &swapChainFramebuffers[i] ) != VK_SUCCESS )
+        if( vkCreateFramebuffer( App::get().getLogicalDevice().getDeviceRef(), &framebufferInfo, nullptr, &swapChainFramebuffers[i] ) != VK_SUCCESS )
         {
             throw std::runtime_error( "failed to create framebuffer!" );
         }
@@ -33,6 +35,6 @@ Framebuffers::~Framebuffers()
 {
     for( auto framebuffer : swapChainFramebuffers )
     {
-        vkDestroyFramebuffer( HelloTriangleApplication::getLogicalDevice().getDeviceRef(), framebuffer, nullptr );
+        vkDestroyFramebuffer( App::get().getLogicalDevice().getDeviceRef(), framebuffer, nullptr );
     }
 }

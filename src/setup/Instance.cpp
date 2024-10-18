@@ -5,10 +5,12 @@
 #include "DebugMessenger.hpp"
 #include "HelloTriangleApplication.hpp"
 
+using App = HelloTriangleApplication;
+
 Instance::Instance()
 {
 	// Check for validation layer support
-	if( HelloTriangleApplication::enableValidationLayers && !checkValidationLayerSupport() )
+	if( App::get().enableValidationLayers && !checkValidationLayerSupport() )
 	{
 		throw std::runtime_error( "validation layers requested, but not available!" );
 	}
@@ -32,10 +34,10 @@ Instance::Instance()
 	createInfo.ppEnabledExtensionNames = extensions.data();
 
 	VkDebugUtilsMessengerCreateInfoEXT debugCreateInfo{};
-	if( HelloTriangleApplication::enableValidationLayers )
+	if( App::get().enableValidationLayers )
 	{
-		createInfo.enabledLayerCount = static_cast< uint32_t >(HelloTriangleApplication::validationLayers.size());
-		createInfo.ppEnabledLayerNames = HelloTriangleApplication::validationLayers.data();
+		createInfo.enabledLayerCount = static_cast< uint32_t >(App::get().validationLayers.size());
+		createInfo.ppEnabledLayerNames = App::get().validationLayers.data();
 
 		DebugMessenger::populateDebugMessengerCreateInfo( debugCreateInfo );
 		createInfo.pNext = ( VkDebugUtilsMessengerCreateInfoEXT* )&debugCreateInfo;
@@ -68,7 +70,7 @@ bool Instance::checkValidationLayerSupport()
 	std::vector<VkLayerProperties> availableLayers( layerCount );
 	vkEnumerateInstanceLayerProperties( &layerCount, availableLayers.data() );
 
-	for( const char* layerName : HelloTriangleApplication::validationLayers )
+	for( const char* layerName : App::get().validationLayers )
 	{
 		bool layerFound = false;
 
@@ -97,7 +99,7 @@ std::vector<const char*> Instance::getRequiredExtensions()
 
 	std::vector<const char*> extensions( glfwExtensions, glfwExtensions + glfwExtensionCount );
 
-	if( HelloTriangleApplication::enableValidationLayers )
+	if( App::get().enableValidationLayers )
 	{
 		extensions.push_back( VK_EXT_DEBUG_UTILS_EXTENSION_NAME );
 	}

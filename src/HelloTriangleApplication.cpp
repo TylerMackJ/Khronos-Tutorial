@@ -6,23 +6,27 @@
 #include <fstream>
 #include <iostream>
 
-std::unique_ptr<GLFWInit> HelloTriangleApplication::glfw = std::make_unique<GLFWInit>();
-std::unique_ptr<Window> HelloTriangleApplication::window = std::make_unique<Window>();
-std::unique_ptr<Instance> HelloTriangleApplication::instance = std::make_unique<Instance>();
-std::unique_ptr<DebugMessenger> HelloTriangleApplication::debugMessenger = std::make_unique<DebugMessenger>();
-std::unique_ptr<Surface> HelloTriangleApplication::surface = std::make_unique<Surface>();
-std::unique_ptr<PhysicalDevice> HelloTriangleApplication::physicalDevice = std::make_unique<PhysicalDevice>();
-std::unique_ptr<LogicalDevice> HelloTriangleApplication::logicalDevice = std::make_unique<LogicalDevice>();
-std::unique_ptr<SwapChain> HelloTriangleApplication::swapChain = std::make_unique<SwapChain>();
-std::unique_ptr<ImageViews> HelloTriangleApplication::imageViews = std::make_unique<ImageViews>();
-std::unique_ptr<RenderPass> HelloTriangleApplication::renderPass = std::make_unique<RenderPass>();
-std::unique_ptr<GraphicsPipeline> HelloTriangleApplication::graphicsPipeline = std::make_unique<GraphicsPipeline>();
-std::unique_ptr<Framebuffers> HelloTriangleApplication::framebuffers = std::make_unique<Framebuffers>();
-std::unique_ptr<CommandPool> HelloTriangleApplication::commandPool = std::make_unique<CommandPool>();
-std::unique_ptr<CommandBuffer> HelloTriangleApplication::commandBuffer = std::make_unique<CommandBuffer>();
-std::unique_ptr<SyncObjects> HelloTriangleApplication::syncObjects = std::make_unique<SyncObjects>();
+HelloTriangleApplication* HelloTriangleApplication::singletonInstance = nullptr;
 
-uint32_t HelloTriangleApplication::currentFrame = 0;
+void HelloTriangleApplication::init()
+{
+	glfw = std::make_unique<GLFWInit>();
+	window = std::make_unique<Window>();
+	instance = std::make_unique<Instance>();
+	debugMessenger = std::make_unique<DebugMessenger>();
+	surface = std::make_unique<Surface>();
+	physicalDevice = std::make_unique<PhysicalDevice>();
+	logicalDevice = std::make_unique<LogicalDevice>();
+	swapChain = std::make_unique<SwapChain>();
+	imageViews = std::make_unique<ImageViews>();
+	renderPass = std::make_unique<RenderPass>();
+	graphicsPipeline = std::make_unique<GraphicsPipeline>();
+	framebuffers = std::make_unique<Framebuffers>();
+	commandPool = std::make_unique<CommandPool>();
+	commandBuffer = std::make_unique<CommandBuffer>();
+	syncObjects = std::make_unique<SyncObjects>();
+	currentFrame = 0;
+}
 
 void HelloTriangleApplication::run()
 {

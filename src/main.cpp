@@ -7,9 +7,11 @@
 
 int main()
 {
+	HelloTriangleApplication& app = HelloTriangleApplication::get();
+	app.init();
 	try
 	{
-		HelloTriangleApplication::run();
+		app.run();
 	}
 	catch( const std::exception& e )
 	{
