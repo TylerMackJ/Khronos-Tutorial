@@ -6,7 +6,11 @@
 
 #include "device/PhysicalDevice.hpp"
 
-SwapChain::SwapChain()
+SwapChain::SwapChain() :
+    swapChain( VK_NULL_HANDLE ),
+    swapChainImages(),
+    swapChainImageFormat( VK_FORMAT_UNDEFINED ),
+    swapChainExtent( { 0, 0 } )
 {
     PhysicalDevice::SwapChainSupportDetails swapChainSupport = HelloTriangleApplication::getPhysicalDevice().getSwapChainSupportDetails(); 
 

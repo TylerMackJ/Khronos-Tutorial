@@ -10,7 +10,12 @@ public:
 	~Window();
 
 	GLFWwindow* get() const;
+	const bool getFramebufferResized() const { return framebufferResized; }
+	void setFramebufferResized( bool framebufferResized ) { this->framebufferResized = framebufferResized; } 
+
+	static void framebufferResizeCallback( GLFWwindow* window, int width, int height );
 
 private:
 	GLFWwindow* window;
+	bool framebufferResized;
 };

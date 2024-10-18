@@ -78,6 +78,7 @@ public:
 
 private:
 	static void drawFrame();
+	static void recreateSwapChain();
 
 	static uint32_t currentFrame;
 };

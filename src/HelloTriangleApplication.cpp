@@ -38,10 +38,21 @@ void HelloTriangleApplication::run()
 void HelloTriangleApplication::drawFrame()
 {
 	vkWaitForFences( getLogicalDevice().getDeviceRef(), 1, &(getSyncObjects().getInFlightFences()[currentFrame]), VK_TRUE, UINT64_MAX );
-	vkResetFences( getLogicalDevice().getDeviceRef(), 1, &getSyncObjects().getInFlightFences()[currentFrame] );
 
 	uint32_t imageIndex;
-	vkAcquireNextImageKHR( getLogicalDevice().getDeviceRef(), getSwapChain().getSwapChainRef(), UINT64_MAX, getSyncObjects().getImageAvailableSemaphores()[currentFrame], VK_NULL_HANDLE, &imageIndex );
+	VkResult result = vkAcquireNextImageKHR( getLogicalDevice().getDeviceRef(), getSwapChain().getSwapChainRef(), UINT64_MAX, getSyncObjects().getImageAvailableSemaphores()[currentFrame], VK_NULL_HANDLE, &imageIndex );
+
+	if( result == VK_ERROR_OUT_OF_DATE_KHR )
+	{
+		recreateSwapChain();
+		return;
+	}
+	else if ( result != VK_SUCCESS && result != VK_SUBOPTIMAL_KHR )
+	{
+		throw std::runtime_error( "failed to acquire swap chain image!" );
+	}
+
+	vkResetFences( getLogicalDevice().getDeviceRef(), 1, &getSyncObjects().getInFlightFences()[currentFrame] );
 
 	vkResetCommandBuffer( getCommandBuffer().getCommandBuffers()[currentFrame], 0 );
 
@@ -75,9 +86,40 @@ void HelloTriangleApplication::drawFrame()
 	presentInfo.pImageIndices = &imageIndex;
 	presentInfo.pResults = nullptr;
 
-	vkQueuePresentKHR( getLogicalDevice().getPresentQueueRef(), &presentInfo );
+	result = vkQueuePresentKHR( getLogicalDevice().getPresentQueueRef(), &presentInfo );
+
+	if( result == VK_ERROR_OUT_OF_DATE_KHR || result == VK_SUBOPTIMAL_KHR || window->getFramebufferResized() )
+	{
+		window->setFramebufferResized( false );
+		recreateSwapChain();
+	}
+	else if ( result != VK_SUCCESS )
+	{
+		throw std::runtime_error( "failed to present swap chain image!" );
+	}
 
 	currentFrame = ( currentFrame + 1 ) % MAX_FRAMES_IN_FLIGHT;
+}
+
+void HelloTriangleApplication::recreateSwapChain()
+{
+	int width = 0, height = 0;
+	glfwGetFramebufferSize( window->get(), &width, &height );
+	while( width == 0 || height == 0 )
+	{
+		glfwGetFramebufferSize( window->get(), &width, &height );
+		glfwWaitEvents();
+	}
+
+	vkDeviceWaitIdle( getLogicalDevice().getDeviceRef() );
+
+	framebuffers.reset();
+	imageViews.reset();
+	swapChain.reset();
+
+	swapChain = std::make_unique<SwapChain>();
+	imageViews = std::make_unique<ImageViews>();
+	framebuffers = std::make_unique<Framebuffers>();
 }
 
 std::vector<char> HelloTriangleApplication::readFile( const std::string& filename )
