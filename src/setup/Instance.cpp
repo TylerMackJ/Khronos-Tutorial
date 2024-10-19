@@ -54,7 +54,9 @@ Instance::Instance()
 		throw std::runtime_error( "failed to create instance!" );
 	}
 
-	printExtensions();
+	#ifndef NDEBUG
+		printExtensions();
+	#endif
 }
 
 Instance::~Instance()
