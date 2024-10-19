@@ -8,9 +8,11 @@ buildType:
       buildType: Debug
       settings:
         CMAKE_BUILD_TYPE: Debug
+        CMAKE_BUILD_PARALLEL_LEVEL: 8
     release:
       short: Release
       long: Build without debugging information
       buildType: Release
       settings:
         CMAKE_BUILD_TYPE: RELEASE
+        CMAKE_BUILD_PARALLEL_LEVEL: 8

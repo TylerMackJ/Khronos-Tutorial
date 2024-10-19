@@ -3,21 +3,23 @@
 #include <vector>
 #include <iostream>
 
+#include "device/LogicalDevice.hpp"
+#include "device/PhysicalDevice.hpp"
+#include "drawing/CommandBuffer.hpp"
+#include "drawing/CommandPool.hpp"
+#include "drawing/Framebuffers.hpp"
+#include "drawing/SyncObjects.hpp"
+#include "graphicsPipeline/GraphicsPipeline.hpp"
+#include "graphicsPipeline/RenderPass.hpp"
+#include "graphicsPipeline/Vertex.hpp"
+#include "graphicsPipeline/Buffer.hpp"
+#include "presentation/ImageViews.hpp"
+#include "presentation/Surface.hpp"
+#include "presentation/SwapChain.hpp"
 #include "setup/DebugMessenger.hpp"
 #include "setup/GLFWInit.hpp"
 #include "setup/Instance.hpp"
-#include "device/LogicalDevice.hpp"
-#include "device/PhysicalDevice.hpp"
-#include "presentation/Surface.hpp"
 #include "setup/Window.hpp"
-#include "presentation/SwapChain.hpp"
-#include "presentation/ImageViews.hpp"
-#include "graphicsPipeline/RenderPass.hpp"
-#include "graphicsPipeline/GraphicsPipeline.hpp"
-#include "drawing/Framebuffers.hpp"
-#include "drawing/CommandPool.hpp"
-#include "drawing/CommandBuffer.hpp"
-#include "drawing/SyncObjects.hpp"
 
 class HelloTriangleApplication
 {
@@ -58,25 +60,29 @@ private:
 	std::unique_ptr<GraphicsPipeline> graphicsPipeline;
 	std::unique_ptr<Framebuffers> framebuffers;
 	std::unique_ptr<CommandPool> commandPool;
+	std::unique_ptr<Buffer> vertexBuffer;
+	std::unique_ptr<Buffer> indexBuffer;
 	std::unique_ptr<CommandBuffer> commandBuffer;
 	std::unique_ptr<SyncObjects> syncObjects;
 
 public:
-	GLFWInit& getGLFWInit() { return *glfw; }
-	Window& getWindow() { return *window; }
-	Instance& getInstance() { return *instance; }
-	DebugMessenger& getDebugMessenger() { return *debugMessenger; }
-	Surface& getSurface() { return *surface; }
-	PhysicalDevice& getPhysicalDevice() { return *physicalDevice; }
-	LogicalDevice& getLogicalDevice() { return *logicalDevice; }
-	SwapChain& getSwapChain() { return *swapChain; }
-	ImageViews& getImageViews() { return *imageViews; }
-	RenderPass& getRenderPass() { return *renderPass; }
-	GraphicsPipeline& getGraphicsPipeline() { return *graphicsPipeline; }
-	Framebuffers& getFramebuffers() { return *framebuffers; }
-	CommandPool& getCommandPool() { return *commandPool; }
 	CommandBuffer& getCommandBuffer() { return *commandBuffer; }
+	CommandPool& getCommandPool() { return *commandPool; }
+	DebugMessenger& getDebugMessenger() { return *debugMessenger; }
+	Framebuffers& getFramebuffers() { return *framebuffers; }
+	GLFWInit& getGLFWInit() { return *glfw; }
+	GraphicsPipeline& getGraphicsPipeline() { return *graphicsPipeline; }
+	ImageViews& getImageViews() { return *imageViews; }
+	Instance& getInstance() { return *instance; }
+	LogicalDevice& getLogicalDevice() { return *logicalDevice; }
+	PhysicalDevice& getPhysicalDevice() { return *physicalDevice; }
+	RenderPass& getRenderPass() { return *renderPass; }
+	Surface& getSurface() { return *surface; }
+	SwapChain& getSwapChain() { return *swapChain; }
 	SyncObjects& getSyncObjects() { return *syncObjects; }
+	Buffer& getVertexBuffer() { return *vertexBuffer; }
+	Buffer& getIndexBuffer() { return *indexBuffer; }
+	Window& getWindow() { return *window; }
 
 public:
 	const uint32_t MAX_FRAMES_IN_FLIGHT = 2;
@@ -97,11 +103,26 @@ public:
 	const bool enableValidationLayers = true;
 #endif // NDEBUG
 
+	const std::vector<Vertex> vertices = {
+		{ {-0.5f, -0.5f}, {1.0f, 0.0f, 0.0f} },
+		{ { 0.5f, -0.5f}, {0.0f, 1.0f, 0.0f} },
+		{ { 0.5f,  0.5f}, {0.0f, 0.0f, 1.0f} },
+		{ {-0.5f,  0.5f}, {1.0f, 1.0f, 1.0f} }
+	};
+
+	const std::vector<uint16_t> indices = {
+		0, 1, 2,
+		2, 3, 0
+	};
+
 	static std::vector<char> readFile( const std::string& filename );
 
 private:
 	void drawFrame();
 	void recreateSwapChain();
+
+	void createVertexBuffer();
+	void createIndexBuffer();
 
 	uint32_t currentFrame;
 };

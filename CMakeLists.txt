@@ -46,8 +46,7 @@ add_shaders(Kronos
     shaders/shader.frag
 )
 
-add_executable(Kronos 
-    src/HelloTriangleApplication.cpp
+add_executable(Kronos src/HelloTriangleApplication.cpp
     src/HelloTriangleApplication.hpp
     src/device/LogicalDevice.cpp
     src/device/LogicalDevice.hpp
@@ -61,10 +60,13 @@ add_executable(Kronos
     src/drawing/Framebuffers.hpp
     src/drawing/SyncObjects.cpp
     src/drawing/SyncObjects.hpp
+    src/graphicsPipeline/Buffer.cpp
+    src/graphicsPipeline/Buffer.hpp
     src/graphicsPipeline/GraphicsPipeline.cpp
     src/graphicsPipeline/GraphicsPipeline.hpp
     src/graphicsPipeline/RenderPass.cpp
     src/graphicsPipeline/RenderPass.hpp
+    src/graphicsPipeline/Vertex.hpp
     src/main.cpp
     src/presentation/ImageViews.cpp
     src/presentation/ImageViews.hpp
@@ -82,5 +84,6 @@ add_executable(Kronos
     src/setup/Window.hpp
 )
 target_include_directories(Kronos PRIVATE src)
+target_include_directories(Kronos PUBLIC external/glm)
 target_link_libraries(Kronos glfw)
 target_link_libraries(Kronos Vulkan::Vulkan)

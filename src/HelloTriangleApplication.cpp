@@ -23,6 +23,8 @@ void HelloTriangleApplication::init()
 	graphicsPipeline = std::make_unique<GraphicsPipeline>();
 	framebuffers = std::make_unique<Framebuffers>();
 	commandPool = std::make_unique<CommandPool>();
+	createVertexBuffer();
+	createIndexBuffer();
 	commandBuffer = std::make_unique<CommandBuffer>();
 	syncObjects = std::make_unique<SyncObjects>();
 	currentFrame = 0;
@@ -124,6 +126,37 @@ void HelloTriangleApplication::recreateSwapChain()
 	swapChain = std::make_unique<SwapChain>();
 	imageViews = std::make_unique<ImageViews>();
 	framebuffers = std::make_unique<Framebuffers>();
+}
+
+void HelloTriangleApplication::createVertexBuffer()
+{
+	VkDeviceSize bufferSize = sizeof( vertices[0] ) * vertices.size();
+	std::unique_ptr<Buffer> stagingBuffer = std::make_unique<Buffer>(bufferSize, VK_BUFFER_USAGE_TRANSFER_SRC_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT);
+
+	void* data;
+	vkMapMemory( getLogicalDevice().getDeviceRef(), stagingBuffer->getBufferMemory(), 0, bufferSize, 0, &data );
+	memcpy( data, vertices.data(), (size_t)bufferSize );
+	vkUnmapMemory( getLogicalDevice().getDeviceRef(), stagingBuffer->getBufferMemory() );
+
+	vertexBuffer = std::make_unique<Buffer>(bufferSize, VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_VERTEX_BUFFER_BIT, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT );
+
+	Buffer::copyBuffer( *stagingBuffer, *vertexBuffer, bufferSize );
+}
+
+void HelloTriangleApplication::createIndexBuffer()
+{
+	VkDeviceSize bufferSize = sizeof( indices[0] ) * indices.size();
+
+	std::unique_ptr<Buffer> stagingBuffer = std::make_unique<Buffer>(bufferSize, VK_BUFFER_USAGE_TRANSFER_SRC_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT);
+
+	void* data;
+	vkMapMemory( getLogicalDevice().getDeviceRef(), stagingBuffer->getBufferMemory(), 0, bufferSize, 0, &data );
+	memcpy( data, indices.data(), (size_t)bufferSize );
+	vkUnmapMemory( getLogicalDevice().getDeviceRef(), stagingBuffer->getBufferMemory() );
+
+	indexBuffer = std::make_unique<Buffer>(bufferSize, VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_INDEX_BUFFER_BIT, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT );
+
+	Buffer::copyBuffer( *stagingBuffer, *indexBuffer, bufferSize );
 }
 
 std::vector<char> HelloTriangleApplication::readFile( const std::string& filename )
