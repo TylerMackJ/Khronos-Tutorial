@@ -46,7 +46,8 @@ add_shaders(Kronos
     shaders/shader.frag
 )
 
-add_executable(Kronos src/HelloTriangleApplication.cpp
+add_executable(Kronos 
+    src/HelloTriangleApplication.cpp
     src/HelloTriangleApplication.hpp
     src/device/LogicalDevice.cpp
     src/device/LogicalDevice.hpp
@@ -62,10 +63,17 @@ add_executable(Kronos src/HelloTriangleApplication.cpp
     src/drawing/SyncObjects.hpp
     src/graphicsPipeline/Buffer.cpp
     src/graphicsPipeline/Buffer.hpp
+    src/graphicsPipeline/BufferMemoryMap.cpp
+    src/graphicsPipeline/BufferMemoryMap.hpp
+    src/graphicsPipeline/DescriptorPool.cpp
+    src/graphicsPipeline/DescriptorPool.hpp
+    src/graphicsPipeline/DescriptorSetLayout.cpp
+    src/graphicsPipeline/DescriptorSetLayout.hpp
     src/graphicsPipeline/GraphicsPipeline.cpp
     src/graphicsPipeline/GraphicsPipeline.hpp
     src/graphicsPipeline/RenderPass.cpp
     src/graphicsPipeline/RenderPass.hpp
+    src/graphicsPipeline/UniformBufferObject.hpp
     src/graphicsPipeline/Vertex.hpp
     src/main.cpp
     src/presentation/ImageViews.cpp
@@ -77,10 +85,33 @@ add_executable(Kronos src/HelloTriangleApplication.cpp
     src/setup/DebugMessenger.cpp
     src/setup/DebugMessenger.hpp
     src/setup/GLFWInit.cpp
-    src/setup/GLFWInit.hpp
     src/setup/Instance.cpp
     src/setup/Instance.hpp
     src/setup/Window.cpp
+    src/setup/Window.hpp
+)
+target_precompile_headers(Kronos
+    PRIVATE
+    src/HelloTriangleApplication.hpp
+    src/device/LogicalDevice.hpp
+    src/device/PhysicalDevice.hpp
+    src/drawing/CommandBuffer.hpp
+    src/drawing/CommandPool.hpp
+    src/drawing/Framebuffers.hpp
+    src/drawing/SyncObjects.hpp
+    src/graphicsPipeline/Buffer.hpp
+    src/graphicsPipeline/BufferMemoryMap.hpp
+    src/graphicsPipeline/DescriptorPool.hpp
+    src/graphicsPipeline/DescriptorSetLayout.hpp
+    src/graphicsPipeline/GraphicsPipeline.hpp
+    src/graphicsPipeline/RenderPass.hpp
+    src/graphicsPipeline/UniformBufferObject.hpp
+    src/graphicsPipeline/Vertex.hpp
+    src/presentation/ImageViews.hpp
+    src/presentation/Surface.hpp
+    src/presentation/SwapChain.hpp
+    src/setup/DebugMessenger.hpp
+    src/setup/Instance.hpp
     src/setup/Window.hpp
 )
 target_include_directories(Kronos PRIVATE src)

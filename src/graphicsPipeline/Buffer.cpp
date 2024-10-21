@@ -40,6 +40,25 @@ Buffer::~Buffer()
     vkFreeMemory(App::get().getLogicalDevice().getDeviceRef(), bufferMemory, nullptr);
 }
 
+void Buffer::mapMemory( VkDeviceSize offset, VkDeviceSize size, VkMemoryMapFlags flags )
+{
+    bufferMemoryMap = std::make_unique<BufferMemoryMap>(bufferMemory, offset, size, flags);
+}
+
+void Buffer::copyTo( const void* data )
+{
+    if( bufferMemoryMap == nullptr )
+    {
+        std::runtime_error("Buffer not mapped!");
+    }
+    bufferMemoryMap->copy(data);
+}
+
+void Buffer::unmapMemory()
+{
+    bufferMemoryMap.reset();
+}
+
 
 uint32_t Buffer::findMemoryType(uint32_t typeFilter, VkMemoryPropertyFlags properties)
 {
