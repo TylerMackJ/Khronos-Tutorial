@@ -4,20 +4,14 @@
 
 using App = HelloTriangleApplication;
 
-BufferMemoryMap::BufferMemoryMap( VkDeviceMemory& bufferMemory, VkDeviceSize& offset, VkDeviceSize& size, VkMemoryMapFlags& flags ) :
-    bufferMemory( bufferMemory ),
-    size( size ),
-    data( nullptr )
+BufferMemoryMap::BufferMemoryMap(
+    VkDeviceMemory& bufferMemory, VkDeviceSize& offset, VkDeviceSize& size, VkMemoryMapFlags& flags
+)
+    : bufferMemory( bufferMemory ), size( size ), data( nullptr )
 {
-	vkMapMemory( App::get().getLogicalDevice().getDeviceRef(), bufferMemory, offset, size, flags, &data );
+    vkMapMemory( App::get().getLogicalDevice().getDeviceRef(), bufferMemory, offset, size, flags, &data );
 }
 
-BufferMemoryMap::~BufferMemoryMap()
-{
-	vkUnmapMemory( App::get().getLogicalDevice().getDeviceRef(), bufferMemory );
-}
+BufferMemoryMap::~BufferMemoryMap() { vkUnmapMemory( App::get().getLogicalDevice().getDeviceRef(), bufferMemory ); }
 
-void BufferMemoryMap::copy( const void* src )
-{
-    memcpy( data, src, size );
-}
+void BufferMemoryMap::copy( const void* src ) { memcpy( data, src, size ); }

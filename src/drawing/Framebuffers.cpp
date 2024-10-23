@@ -4,16 +4,15 @@
 
 using App = HelloTriangleApplication;
 
-Framebuffers::Framebuffers() 
+Framebuffers::Framebuffers()
 {
-    swapChainFramebuffers.resize(App::get().getSwapChain().getSwapChainImages().size());
+    int* i;
+
+    swapChainFramebuffers.resize( App::get().getSwapChain().getSwapChainImages().size() );
 
     for( size_t i = 0; i < App::get().getSwapChain().getSwapChainImages().size(); i++ )
     {
-        VkImageView attachments[] =
-        {
-            App::get().getImageViews().getImageViews()[i]
-        };
+        VkImageView attachments[] = { App::get().getImageViews()[i]->getImageView() };
 
         VkFramebufferCreateInfo framebufferInfo{};
         framebufferInfo.sType = VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO;
@@ -24,14 +23,16 @@ Framebuffers::Framebuffers()
         framebufferInfo.height = App::get().getSwapChain().getSwapChainExtent().height;
         framebufferInfo.layers = 1;
 
-        if( vkCreateFramebuffer( App::get().getLogicalDevice().getDeviceRef(), &framebufferInfo, nullptr, &swapChainFramebuffers[i] ) != VK_SUCCESS )
+        if( vkCreateFramebuffer(
+                App::get().getLogicalDevice().getDeviceRef(), &framebufferInfo, nullptr, &swapChainFramebuffers[i]
+            ) != VK_SUCCESS )
         {
             throw std::runtime_error( "failed to create framebuffer!" );
         }
     }
 }
 
-Framebuffers::~Framebuffers() 
+Framebuffers::~Framebuffers()
 {
     for( auto framebuffer : swapChainFramebuffers )
     {

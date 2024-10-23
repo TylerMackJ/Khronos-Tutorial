@@ -1,7 +1,7 @@
 ---
 Language:        Cpp
 # BasedOnStyle:  LLVM
-AccessModifierOffset: -2
+AccessModifierOffset: -4
 AlignAfterOpenBracket: BlockIndent
 AlignArrayOfStructures: None
 AlignConsecutiveAssignments:
@@ -225,7 +225,7 @@ SpacesInParensOptions:
   InCStyleCasts:   true
   InConditionalStatements: true
   InEmptyParentheses: false
-  Other:           false
+  Other:           true
 SpacesInSquareBrackets: false
 Standard:        Latest
 StatementAttributeLikeMacros:

@@ -1,7 +1,8 @@
 #pragma once
 
-class GLFWInit {
+class GLFWInit
+{
 public:
-	GLFWInit();
-	~GLFWInit();
+    GLFWInit();
+    ~GLFWInit();
 };

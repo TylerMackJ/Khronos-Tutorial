@@ -9,12 +9,11 @@
 class Surface
 {
 public:
-	Surface();
-	~Surface();
+    Surface();
+    ~Surface();
 
-	VkSurfaceKHR& getSurfaceRef() { return surface; };
+    VkSurfaceKHR& getSurfaceRef() { return surface; };
 
 private:
-	VkSurfaceKHR surface;
+    VkSurfaceKHR surface;
 };
-

@@ -10,6 +10,7 @@ public:
     ~DescriptorPool();
 
     const VkDescriptorPool& getDescriptorPool() const { return descriptorPool; }
+
 private:
     VkDescriptorPool descriptorPool;
 };

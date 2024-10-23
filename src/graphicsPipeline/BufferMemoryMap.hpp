@@ -9,7 +9,7 @@ public:
     BufferMemoryMap( VkDeviceMemory& bufferMemory, VkDeviceSize& offset, VkDeviceSize& size, VkMemoryMapFlags& flags );
     ~BufferMemoryMap();
 
-    void copy(const void* src);
+    void copy( const void* src );
 
 private:
     VkDeviceMemory& bufferMemory;

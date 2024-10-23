@@ -21,10 +21,9 @@ public:
     void unmapMemory();
 
     static void copyBuffer( Buffer& srcBuffer, Buffer& dstBuffer, VkDeviceSize size );
-
-private:
     static uint32_t findMemoryType( uint32_t typeFilter, VkMemoryPropertyFlags properties );
 
+private:
     VkBuffer buffer;
     VkDeviceMemory bufferMemory;
     std::unique_ptr<BufferMemoryMap> bufferMemoryMap;

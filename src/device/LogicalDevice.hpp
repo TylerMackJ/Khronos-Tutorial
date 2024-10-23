@@ -6,17 +6,15 @@
 class LogicalDevice
 {
 public:
-	LogicalDevice();
-	~LogicalDevice();
+    LogicalDevice();
+    ~LogicalDevice();
 
-	VkDevice& getDeviceRef() { return device; };
-	VkQueue& getGraphicsQueueRef() { return graphicsQueue; }
-	VkQueue& getPresentQueueRef() { return presentQueue; };
+    VkDevice& getDeviceRef() { return device; };
+    VkQueue& getGraphicsQueueRef() { return graphicsQueue; }
+    VkQueue& getPresentQueueRef() { return presentQueue; };
 
 private:
-
-	VkDevice device;
-	VkQueue graphicsQueue;
-	VkQueue presentQueue;
+    VkDevice device;
+    VkQueue graphicsQueue;
+    VkQueue presentQueue;
 };
-

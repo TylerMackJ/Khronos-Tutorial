@@ -7,9 +7,9 @@ using App = HelloTriangleApplication;
 
 #include <iostream>
 
-GraphicsPipeline::GraphicsPipeline() :
-    vertShaderModule( createShaderModule( App::get().readFile( "shader.vert.spv" ) ) ),
-    fragShaderModule( createShaderModule( App::get().readFile( "shader.frag.spv" ) ) )
+GraphicsPipeline::GraphicsPipeline()
+    : vertShaderModule( createShaderModule( App::get().readFile( "shader.vert.spv" ) ) ),
+      fragShaderModule( createShaderModule( App::get().readFile( "shader.frag.spv" ) ) )
 {
     VkPipelineShaderStageCreateInfo vertShaderStageInfo{};
     vertShaderStageInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
@@ -31,7 +31,7 @@ GraphicsPipeline::GraphicsPipeline() :
     VkPipelineVertexInputStateCreateInfo vertexInputInfo{};
     vertexInputInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO;
     vertexInputInfo.vertexBindingDescriptionCount = 1;
-    vertexInputInfo.vertexAttributeDescriptionCount = static_cast< uint32_t >( attributeDescriptions.size() );
+    vertexInputInfo.vertexAttributeDescriptionCount = static_cast<uint32_t>( attributeDescriptions.size() );
     vertexInputInfo.pVertexBindingDescriptions = &bindingDescription;
     vertexInputInfo.pVertexAttributeDescriptions = attributeDescriptions.data();
 
@@ -68,7 +68,8 @@ GraphicsPipeline::GraphicsPipeline() :
     multisampling.alphaToOneEnable = VK_FALSE;
 
     VkPipelineColorBlendAttachmentState colorBlendAttachment{};
-    colorBlendAttachment.colorWriteMask = VK_COLOR_COMPONENT_R_BIT | VK_COLOR_COMPONENT_G_BIT | VK_COLOR_COMPONENT_B_BIT | VK_COLOR_COMPONENT_A_BIT;
+    colorBlendAttachment.colorWriteMask =
+        VK_COLOR_COMPONENT_R_BIT | VK_COLOR_COMPONENT_G_BIT | VK_COLOR_COMPONENT_B_BIT | VK_COLOR_COMPONENT_A_BIT;
     colorBlendAttachment.blendEnable = VK_FALSE;
     colorBlendAttachment.srcColorBlendFactor = VK_BLEND_FACTOR_ONE;
     colorBlendAttachment.dstColorBlendFactor = VK_BLEND_FACTOR_ZERO;
@@ -88,13 +89,10 @@ GraphicsPipeline::GraphicsPipeline() :
     colorBlending.blendConstants[2] = 0.0f;
     colorBlending.blendConstants[3] = 0.0f;
 
-    std::vector<VkDynamicState> dynamicStates = {
-        VK_DYNAMIC_STATE_VIEWPORT,
-        VK_DYNAMIC_STATE_SCISSOR
-    };
+    std::vector<VkDynamicState> dynamicStates = { VK_DYNAMIC_STATE_VIEWPORT, VK_DYNAMIC_STATE_SCISSOR };
     VkPipelineDynamicStateCreateInfo dynamicState{};
     dynamicState.sType = VK_STRUCTURE_TYPE_PIPELINE_DYNAMIC_STATE_CREATE_INFO;
-    dynamicState.dynamicStateCount = static_cast<uint32_t>(dynamicStates.size());
+    dynamicState.dynamicStateCount = static_cast<uint32_t>( dynamicStates.size() );
     dynamicState.pDynamicStates = dynamicStates.data();
 
     VkPipelineLayoutCreateInfo pipelineLayoutInfo{};
@@ -104,7 +102,9 @@ GraphicsPipeline::GraphicsPipeline() :
     pipelineLayoutInfo.pushConstantRangeCount = 0;
     pipelineLayoutInfo.pPushConstantRanges = nullptr;
 
-    if( vkCreatePipelineLayout( App::get().getLogicalDevice().getDeviceRef(), &pipelineLayoutInfo, nullptr, &pipelineLayout ) != VK_SUCCESS )
+    if( vkCreatePipelineLayout(
+            App::get().getLogicalDevice().getDeviceRef(), &pipelineLayoutInfo, nullptr, &pipelineLayout
+        ) != VK_SUCCESS )
     {
         throw std::runtime_error( "failed to create pipeline layout!" );
     }
@@ -127,7 +127,9 @@ GraphicsPipeline::GraphicsPipeline() :
     pipelineInfo.basePipelineHandle = VK_NULL_HANDLE;
     pipelineInfo.basePipelineIndex = -1;
 
-    if( vkCreateGraphicsPipelines( App::get().getLogicalDevice().getDeviceRef(), VK_NULL_HANDLE, 1, &pipelineInfo, nullptr, &graphicsPipeline ) != VK_SUCCESS )
+    if( vkCreateGraphicsPipelines(
+            App::get().getLogicalDevice().getDeviceRef(), VK_NULL_HANDLE, 1, &pipelineInfo, nullptr, &graphicsPipeline
+        ) != VK_SUCCESS )
     {
         throw std::runtime_error( "failed to create graphics pipeline!" );
     }
@@ -147,10 +149,11 @@ VkShaderModule GraphicsPipeline::createShaderModule( const std::vector<char>& co
     VkShaderModuleCreateInfo createInfo{};
     createInfo.sType = VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO;
     createInfo.codeSize = code.size();
-    createInfo.pCode = reinterpret_cast< const uint32_t* >(code.data());
+    createInfo.pCode = reinterpret_cast<const uint32_t*>( code.data() );
 
     VkShaderModule shaderModule;
-    if( vkCreateShaderModule( App::get().getLogicalDevice().getDeviceRef(), &createInfo, nullptr, &shaderModule ) != VK_SUCCESS )
+    if( vkCreateShaderModule( App::get().getLogicalDevice().getDeviceRef(), &createInfo, nullptr, &shaderModule ) !=
+        VK_SUCCESS )
     {
         throw std::runtime_error( "failed to create shader module!" );
     }

@@ -6,22 +6,19 @@
 #include <optional>
 #include <stdexcept>
 
-#include "setup/Instance.hpp"
 #include "presentation/Surface.hpp"
+#include "setup/Instance.hpp"
 
 class PhysicalDevice
 {
 public:
-	struct QueueFamilyIndices
-	{
-		std::optional<uint32_t> graphicsFamily;
-		std::optional<uint32_t> presentFamily;
+    struct QueueFamilyIndices
+    {
+        std::optional<uint32_t> graphicsFamily;
+        std::optional<uint32_t> presentFamily;
 
-		bool isComplete()
-		{
-			return graphicsFamily.has_value() && presentFamily.has_value();
-		}
-	};
+        bool isComplete() { return graphicsFamily.has_value() && presentFamily.has_value(); }
+    };
     struct SwapChainSupportDetails
     {
         VkSurfaceCapabilitiesKHR capabilities;
@@ -29,19 +26,19 @@ public:
         std::vector<VkPresentModeKHR> presentModes;
     };
 
+    PhysicalDevice();
 
-	PhysicalDevice();
-
-	VkPhysicalDevice& getPhysicalDeviceRef() { return physicalDevice; }
-	QueueFamilyIndices getQueueFamilyIndices();
-	SwapChainSupportDetails getSwapChainSupportDetails();
+    const VkPhysicalDevice& const getPhysicalDeviceRef() { return physicalDevice; }
+    QueueFamilyIndices getQueueFamilyIndices();
+    SwapChainSupportDetails getSwapChainSupportDetails();
+    const VkPhysicalDeviceProperties& const getProperties() { return properties; }
 
 private:
-	int rateDeviceSuitability( VkPhysicalDevice device );
-	QueueFamilyIndices findQueueFamilies( VkPhysicalDevice device );
-	bool checkDeviceExtensionSupport( VkPhysicalDevice device );
+    int rateDeviceSuitability( VkPhysicalDevice device );
+    QueueFamilyIndices findQueueFamilies( VkPhysicalDevice device );
+    bool checkDeviceExtensionSupport( VkPhysicalDevice device );
     SwapChainSupportDetails querySwapChainSupport( VkPhysicalDevice device );
 
-	VkPhysicalDevice physicalDevice;
+    VkPhysicalDevice physicalDevice;
+    VkPhysicalDeviceProperties properties;
 };
-

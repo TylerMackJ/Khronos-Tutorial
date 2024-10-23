@@ -9,16 +9,16 @@
 class Instance
 {
 public:
-	Instance();
+    Instance();
 
-	~Instance();
+    ~Instance();
 
-	VkInstance& getInstanceRef() { return instance; };
+    VkInstance& getInstanceRef() { return instance; };
 
 private:
-	bool checkValidationLayerSupport();
-	std::vector<const char*> getRequiredExtensions();
-	void printExtensions();
+    bool checkValidationLayerSupport();
+    std::vector<const char*> getRequiredExtensions();
+    void printExtensions();
 
-	VkInstance instance;
+    VkInstance instance;
 };
