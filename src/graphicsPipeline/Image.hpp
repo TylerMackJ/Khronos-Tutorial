@@ -6,32 +6,46 @@
 #include "Buffer.hpp"
 #include "presentation/ImageView.hpp"
 
-class TextureImage
+class Image
 {
 public:
-    TextureImage(
+    Image(
+        uint32_t width,
+        uint32_t height,
+        VkFormat format,
+        VkImageTiling tiling,
+        VkImageUsageFlags usage,
+        VkMemoryPropertyFlags properties
+    );
+    Image(
         const char* filename,
         VkFormat format,
         VkImageTiling tiling,
         VkImageUsageFlags usage,
         VkMemoryPropertyFlags properties
     );
-    ~TextureImage();
+    ~Image();
 
-    const VkImage& getImage() const { return textureImage; }
+    const VkImage& getImage() const { return image; }
     const VkFormat& getFormat() const { return format; }
-    const VkImageView& getImageView() const { return textureImageView->getImageView(); }
+    const VkImageView& getImageView() const { return imageView->getImageView(); }
 
     void transitionLayout( VkImageLayout oldLayout, VkImageLayout newLayout );
     void copyBufferToImage( Buffer& buffer );
-    void createImageView();
+    void createImageView( VkImageAspectFlags aspectFlags );
 
 private:
-    VkImage textureImage;
-    VkDeviceMemory textureImageMemory;
-    VkFormat format;
+    void createImage();
+    bool hasStencilComponent( VkFormat format );
+
+    VkImage image;
+    VkDeviceMemory imageMemory;
     uint32_t width;
     uint32_t height;
+    VkFormat format;
+    VkImageTiling tiling;
+    VkImageUsageFlags usage;
+    VkMemoryPropertyFlags properties;
     std::unique_ptr<Buffer> stagingBuffer;
-    std::unique_ptr<ImageView> textureImageView;
+    std::unique_ptr<ImageView> imageView;
 };
