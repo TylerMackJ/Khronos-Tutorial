@@ -37,10 +37,11 @@ void HelloTriangleApplication::init()
     depthImage->transitionLayout( VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL );
     framebuffers = std::make_unique<Framebuffers>();
     textureImage = std::make_unique<Image>(
-        "textures/texture.jpg", VK_FORMAT_R8G8B8A8_SRGB, VK_IMAGE_TILING_OPTIMAL,
+        "textures/viking_room.png", VK_FORMAT_R8G8B8A8_SRGB, VK_IMAGE_TILING_OPTIMAL,
         VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_SAMPLED_BIT, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT
     );
     textureImage->createImageView( VK_IMAGE_ASPECT_COLOR_BIT );
+    vikingRoomModel = std::make_unique<ModelLoader>( "models/viking_room.obj" );
     createVertexBuffer();
     createIndexBuffer();
     createUniformBuffers();
@@ -210,7 +211,7 @@ void HelloTriangleApplication::createImageViews()
 
 void HelloTriangleApplication::createVertexBuffer()
 {
-    VkDeviceSize bufferSize = sizeof( vertices[0] ) * vertices.size();
+    VkDeviceSize bufferSize = sizeof( vikingRoomModel->getVertices()[0] ) * vikingRoomModel->getVertices().size();
     std::unique_ptr<Buffer> stagingBuffer = std::make_unique<Buffer>(
         bufferSize, VK_BUFFER_USAGE_TRANSFER_SRC_BIT,
         VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT
@@ -218,7 +219,7 @@ void HelloTriangleApplication::createVertexBuffer()
 
     void* data;
     vkMapMemory( getLogicalDevice().getDeviceRef(), stagingBuffer->getBufferMemory(), 0, bufferSize, 0, &data );
-    memcpy( data, vertices.data(), ( size_t )bufferSize );
+    memcpy( data, vikingRoomModel->getVertices().data(), ( size_t )bufferSize );
     vkUnmapMemory( getLogicalDevice().getDeviceRef(), stagingBuffer->getBufferMemory() );
 
     vertexBuffer = std::make_unique<Buffer>(
@@ -231,7 +232,7 @@ void HelloTriangleApplication::createVertexBuffer()
 
 void HelloTriangleApplication::createIndexBuffer()
 {
-    VkDeviceSize bufferSize = sizeof( indices[0] ) * indices.size();
+    VkDeviceSize bufferSize = sizeof( vikingRoomModel->getIndices()[0] ) * vikingRoomModel->getIndices().size();
 
     std::unique_ptr<Buffer> stagingBuffer = std::make_unique<Buffer>(
         bufferSize, VK_BUFFER_USAGE_TRANSFER_SRC_BIT,
@@ -239,7 +240,7 @@ void HelloTriangleApplication::createIndexBuffer()
     );
 
     stagingBuffer->mapMemory( 0, bufferSize, 0 );
-    stagingBuffer->copyTo( indices.data() );
+    stagingBuffer->copyTo( vikingRoomModel->getIndices().data() );
     stagingBuffer->unmapMemory();
 
     indexBuffer = std::make_unique<Buffer>(

@@ -7,7 +7,7 @@ buildType:
       long: Build with debugging information
       buildType: Debug
       settings:
-        CMAKE_BUILD_TYPE: Debug
+        CMAKE_BUILD_TYPE: DEBUG
         CMAKE_BUILD_PARALLEL_LEVEL: 8
     release:
       short: Release

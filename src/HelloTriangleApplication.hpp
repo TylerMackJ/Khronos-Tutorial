@@ -18,6 +18,7 @@
 #include "graphicsPipeline/TextureSampler.hpp"
 #include "graphicsPipeline/UniformBufferObject.hpp"
 #include "graphicsPipeline/Vertex.hpp"
+#include "loader/ModelLoader.hpp"
 #include "presentation/ImageView.hpp"
 #include "presentation/Surface.hpp"
 #include "presentation/SwapChain.hpp"
@@ -62,15 +63,16 @@ private:
     std::unique_ptr<Framebuffers> framebuffers;
     std::unique_ptr<GLFWInit> glfw;
     std::unique_ptr<GraphicsPipeline> graphicsPipeline;
+    std::unique_ptr<Image> depthImage;
+    std::unique_ptr<Image> textureImage;
     std::unique_ptr<Instance> instance;
     std::unique_ptr<LogicalDevice> logicalDevice;
+    std::unique_ptr<ModelLoader> vikingRoomModel;
     std::unique_ptr<PhysicalDevice> physicalDevice;
     std::unique_ptr<RenderPass> renderPass;
     std::unique_ptr<Surface> surface;
     std::unique_ptr<SwapChain> swapChain;
     std::unique_ptr<SyncObjects> syncObjects;
-    std::unique_ptr<Image> textureImage;
-    std::unique_ptr<Image> depthImage;
     std::unique_ptr<TextureSampler> textureSampler;
     std::unique_ptr<Window> window;
     std::vector<VkDescriptorSet> descriptorSets;
@@ -87,11 +89,11 @@ public:
     DescriptorSetLayout& getDescriptorSetLayout() { return *descriptorSetLayout; }
     Framebuffers& getFramebuffers() { return *framebuffers; }
     GLFWInit& getGLFWInit() { return *glfw; }
-    std::vector<std::unique_ptr<ImageView>>& getImageViews() { return imageViews; }
-    Image& getDepthImage() { return *depthImage; }
     GraphicsPipeline& getGraphicsPipeline() { return *graphicsPipeline; }
+    Image& getDepthImage() { return *depthImage; }
     Instance& getInstance() { return *instance; }
     LogicalDevice& getLogicalDevice() { return *logicalDevice; }
+    ModelLoader& getVikingRoomModel() { return *vikingRoomModel; }
     PhysicalDevice& getPhysicalDevice() { return *physicalDevice; }
     RenderPass& getRenderPass() { return *renderPass; }
     Surface& getSurface() { return *surface; }
@@ -99,6 +101,7 @@ public:
     SyncObjects& getSyncObjects() { return *syncObjects; }
     Window& getWindow() { return *window; }
     std::vector<VkDescriptorSet>& getDescriptorSets() { return descriptorSets; }
+    std::vector<std::unique_ptr<ImageView>>& getImageViews() { return imageViews; }
 
     VkFormat findDepthFormat();
 
@@ -116,20 +119,6 @@ public:
 #else
     const bool enableValidationLayers = true;
 #endif // NDEBUG
-
-    const std::vector<Vertex> vertices = {
-        { { -0.5f, -0.5f, +0.0f }, { 1.0f, 0.0f, 0.0f }, { 1.0f, 0.0f } },
-        { { +0.5f, -0.5f, +0.0f }, { 0.0f, 1.0f, 0.0f }, { 0.0f, 0.0f } },
-        { { +0.5f, +0.5f, +0.0f }, { 0.0f, 0.0f, 1.0f }, { 0.0f, 1.0f } },
-        { { -0.5f, +0.5f, +0.0f }, { 1.0f, 1.0f, 1.0f }, { 1.0f, 1.0f } },
-
-        { { -0.5f, -0.5f, -0.5f }, { 1.0f, 0.0f, 0.0f }, { 1.0f, 0.0f } },
-        { { +0.5f, -0.5f, -0.5f }, { 0.0f, 1.0f, 0.0f }, { 0.0f, 0.0f } },
-        { { +0.5f, +0.5f, -0.5f }, { 0.0f, 0.0f, 1.0f }, { 0.0f, 1.0f } },
-        { { -0.5f, +0.5f, -0.5f }, { 1.0f, 1.0f, 1.0f }, { 1.0f, 1.0f } }
-    };
-
-    const std::vector<uint16_t> indices = { 0, 1, 2, 2, 3, 0, 4, 5, 6, 6, 7, 4 };
 
     static std::vector<char> readFile( const std::string& filename );
 

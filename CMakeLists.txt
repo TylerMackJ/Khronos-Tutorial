@@ -47,6 +47,9 @@ add_shaders(Kronos
 )
 
 configure_file(textures/texture.jpg "${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_BUILD_TYPE}/textures/texture.jpg" COPYONLY)
+configure_file(textures/viking_room.png "${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_BUILD_TYPE}/textures/viking_room.png" COPYONLY)
+
+configure_file(models/viking_room.obj "${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_BUILD_TYPE}/models/viking_room.obj" COPYONLY)
 
 add_executable(Kronos 
     src/HelloTriangleApplication.cpp
@@ -64,6 +67,7 @@ add_executable(Kronos
     src/graphicsPipeline/Image.cpp
     src/graphicsPipeline/RenderPass.cpp
     src/graphicsPipeline/TextureSampler.cpp
+    src/loader/ModelLoader.cpp
     src/main.cpp
     src/presentation/ImageView.cpp
     src/presentation/Surface.cpp
@@ -91,6 +95,7 @@ target_precompile_headers(Kronos PRIVATE
     src/graphicsPipeline/TextureSampler.hpp
     src/graphicsPipeline/UniformBufferObject.hpp
     src/graphicsPipeline/Vertex.hpp
+    src/loader/ModelLoader.hpp
     src/presentation/ImageView.hpp
     src/presentation/Surface.hpp
     src/presentation/SwapChain.hpp
@@ -101,5 +106,6 @@ target_precompile_headers(Kronos PRIVATE
 target_include_directories(Kronos PRIVATE src)
 target_include_directories(Kronos PUBLIC external/glm)
 target_include_directories(Kronos PUBLIC external/stb)
+target_include_directories(Kronos PUBLIC external/tinyobjloader)
 target_link_libraries(Kronos glfw)
 target_link_libraries(Kronos Vulkan::Vulkan)

@@ -72,13 +72,15 @@ void CommandBuffer::recordCommandBuffer( VkCommandBuffer commandBuffer, uint32_t
     VkDeviceSize offsets[] = { 0 };
     vkCmdBindVertexBuffers( commandBuffer, 0, 1, vertexBuffers, offsets );
 
-    vkCmdBindIndexBuffer( commandBuffer, App::get().getIndexBuffer().getBuffer(), 0, VK_INDEX_TYPE_UINT16 );
+    vkCmdBindIndexBuffer( commandBuffer, App::get().getIndexBuffer().getBuffer(), 0, VK_INDEX_TYPE_UINT32 );
 
     vkCmdBindDescriptorSets(
         commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, App::get().getGraphicsPipeline().getPipelineLayout(), 0, 1,
         &App::get().getDescriptorSets()[imageIndex], 0, nullptr
     );
-    vkCmdDrawIndexed( commandBuffer, static_cast<uint32_t>( App::get().indices.size() ), 1, 0, 0, 0 );
+    vkCmdDrawIndexed(
+        commandBuffer, static_cast<uint32_t>( App::get().getVikingRoomModel().getIndices().size() ), 1, 0, 0, 0
+    );
 
     vkCmdEndRenderPass( commandBuffer );
 
