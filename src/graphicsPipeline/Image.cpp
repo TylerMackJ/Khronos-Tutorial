@@ -1,4 +1,4 @@
-#include "TextureImage.hpp"
+#include "Image.hpp"
 
 #define STB_IMAGE_IMPLEMENTATION
 #include <stb_image.h>
@@ -11,14 +11,27 @@
 
 using App = HelloTriangleApplication;
 
-TextureImage::TextureImage(
+Image::Image(
+    uint32_t width,
+    uint32_t height,
+    VkFormat format,
+    VkImageTiling tiling,
+    VkImageUsageFlags usage,
+    VkMemoryPropertyFlags properties
+)
+    : width( width ), height( height ), format( format ), tiling( tiling ), usage( usage ), properties( properties )
+{
+    createImage();
+}
+
+Image::Image(
     const char* filename,
     VkFormat format,
     VkImageTiling tiling,
     VkImageUsageFlags usage,
     VkMemoryPropertyFlags properties
 )
-    : format( format )
+    : width( 0 ), height( 0 ), format( format ), tiling( tiling ), usage( usage ), properties( properties )
 {
     int texWidth, texHeight, texChannels;
     stbi_uc* pixels = stbi_load( filename, &texWidth, &texHeight, &texChannels, STBI_rgb_alpha );
@@ -42,6 +55,15 @@ TextureImage::TextureImage(
 
     stbi_image_free( pixels );
 
+    createImage();
+
+    transitionLayout( VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL );
+    copyBufferToImage( *stagingBuffer );
+    transitionLayout( VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL );
+}
+
+void Image::createImage()
+{
     VkImageCreateInfo imageInfo{};
     imageInfo.sType = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO;
     imageInfo.imageType = VK_IMAGE_TYPE_2D;
@@ -58,40 +80,35 @@ TextureImage::TextureImage(
     imageInfo.samples = VK_SAMPLE_COUNT_1_BIT;
     imageInfo.flags = 0;
 
-    if( vkCreateImage( App::get().getLogicalDevice().getDeviceRef(), &imageInfo, nullptr, &textureImage ) !=
-        VK_SUCCESS )
+    if( vkCreateImage( App::get().getLogicalDevice().getDeviceRef(), &imageInfo, nullptr, &image ) != VK_SUCCESS )
     {
         throw std::runtime_error( "failed to create texture image!" );
     }
 
     VkMemoryRequirements memRequirements;
-    vkGetImageMemoryRequirements( App::get().getLogicalDevice().getDeviceRef(), textureImage, &memRequirements );
+    vkGetImageMemoryRequirements( App::get().getLogicalDevice().getDeviceRef(), image, &memRequirements );
 
     VkMemoryAllocateInfo allocInfo{};
     allocInfo.sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
     allocInfo.allocationSize = memRequirements.size;
     allocInfo.memoryTypeIndex = Buffer::findMemoryType( memRequirements.memoryTypeBits, properties );
 
-    if( vkAllocateMemory( App::get().getLogicalDevice().getDeviceRef(), &allocInfo, nullptr, &textureImageMemory ) !=
+    if( vkAllocateMemory( App::get().getLogicalDevice().getDeviceRef(), &allocInfo, nullptr, &imageMemory ) !=
         VK_SUCCESS )
     {
         throw std::runtime_error( "failed to allocate texture image memory!" );
     }
 
-    vkBindImageMemory( App::get().getLogicalDevice().getDeviceRef(), textureImage, textureImageMemory, 0 );
-
-    transitionLayout( VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL );
-    copyBufferToImage( *stagingBuffer );
-    transitionLayout( VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL );
+    vkBindImageMemory( App::get().getLogicalDevice().getDeviceRef(), image, imageMemory, 0 );
 }
 
-TextureImage::~TextureImage()
+Image::~Image()
 {
-    vkDestroyImage( App::get().getLogicalDevice().getDeviceRef(), textureImage, nullptr );
-    vkFreeMemory( App::get().getLogicalDevice().getDeviceRef(), textureImageMemory, nullptr );
+    vkDestroyImage( App::get().getLogicalDevice().getDeviceRef(), image, nullptr );
+    vkFreeMemory( App::get().getLogicalDevice().getDeviceRef(), imageMemory, nullptr );
 }
 
-void TextureImage::transitionLayout( VkImageLayout oldLayout, VkImageLayout newLayout )
+void Image::transitionLayout( VkImageLayout oldLayout, VkImageLayout newLayout )
 {
     VkCommandBuffer commandBuffer = CommandBuffer::beginSingleTimeCommands();
 
@@ -101,7 +118,7 @@ void TextureImage::transitionLayout( VkImageLayout oldLayout, VkImageLayout newL
     barrier.newLayout = newLayout;
     barrier.srcQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
     barrier.dstQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
-    barrier.image = textureImage;
+    barrier.image = image;
     barrier.subresourceRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
     barrier.subresourceRange.baseMipLevel = 0;
     barrier.subresourceRange.levelCount = 1;
@@ -111,10 +128,25 @@ void TextureImage::transitionLayout( VkImageLayout oldLayout, VkImageLayout newL
     VkPipelineStageFlags sourceStage;
     VkPipelineStageFlags destinationStage;
 
+    if( newLayout == VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL )
+    {
+        barrier.subresourceRange.aspectMask = VK_IMAGE_ASPECT_DEPTH_BIT;
+
+        if( hasStencilComponent( format ) )
+        {
+            barrier.subresourceRange.aspectMask |= VK_IMAGE_ASPECT_STENCIL_BIT;
+        }
+    }
+    else
+    {
+        barrier.subresourceRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
+    }
+
     if( oldLayout == VK_IMAGE_LAYOUT_UNDEFINED && newLayout == VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL )
     {
         barrier.srcAccessMask = 0;
         barrier.dstAccessMask = VK_ACCESS_TRANSFER_WRITE_BIT;
+
         sourceStage = VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT;
         destinationStage = VK_PIPELINE_STAGE_TRANSFER_BIT;
     }
@@ -123,8 +155,18 @@ void TextureImage::transitionLayout( VkImageLayout oldLayout, VkImageLayout newL
     {
         barrier.srcAccessMask = VK_ACCESS_TRANSFER_WRITE_BIT;
         barrier.dstAccessMask = VK_ACCESS_SHADER_READ_BIT;
+
         sourceStage = VK_PIPELINE_STAGE_TRANSFER_BIT;
         destinationStage = VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT;
+    }
+    else if( oldLayout == VK_IMAGE_LAYOUT_UNDEFINED && newLayout == VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL )
+    {
+        barrier.srcAccessMask = 0;
+        barrier.dstAccessMask =
+            VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_READ_BIT | VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_WRITE_BIT;
+
+        sourceStage = VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT;
+        destinationStage = VK_PIPELINE_STAGE_EARLY_FRAGMENT_TESTS_BIT;
     }
     else
     {
@@ -136,7 +178,7 @@ void TextureImage::transitionLayout( VkImageLayout oldLayout, VkImageLayout newL
     CommandBuffer::endSingleTimeCommands( commandBuffer );
 }
 
-void TextureImage::copyBufferToImage( Buffer& buffer )
+void Image::copyBufferToImage( Buffer& buffer )
 {
     VkCommandBuffer commandBuffer = CommandBuffer::beginSingleTimeCommands();
 
@@ -152,10 +194,18 @@ void TextureImage::copyBufferToImage( Buffer& buffer )
     region.imageExtent = { width, height, 1 };
 
     vkCmdCopyBufferToImage(
-        commandBuffer, buffer.getBuffer(), textureImage, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, 1, &region
+        commandBuffer, buffer.getBuffer(), image, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, 1, &region
     );
 
     CommandBuffer::endSingleTimeCommands( commandBuffer );
 }
 
-void TextureImage::createImageView() { textureImageView = std::make_unique<ImageView>( textureImage, format ); }
+void Image::createImageView( VkImageAspectFlags aspectFlags )
+{
+    imageView = std::make_unique<ImageView>( image, format, aspectFlags );
+}
+
+bool Image::hasStencilComponent( VkFormat format )
+{
+    return format == VK_FORMAT_D32_SFLOAT_S8_UINT || format == VK_FORMAT_D24_UNORM_S8_UINT;
+}

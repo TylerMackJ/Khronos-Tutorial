@@ -61,8 +61,8 @@ add_executable(Kronos
     src/graphicsPipeline/DescriptorPool.cpp
     src/graphicsPipeline/DescriptorSetLayout.cpp
     src/graphicsPipeline/GraphicsPipeline.cpp
+    src/graphicsPipeline/Image.cpp
     src/graphicsPipeline/RenderPass.cpp
-    src/graphicsPipeline/TextureImage.cpp
     src/graphicsPipeline/TextureSampler.cpp
     src/main.cpp
     src/presentation/ImageView.cpp
@@ -86,8 +86,8 @@ target_precompile_headers(Kronos PRIVATE
     src/graphicsPipeline/DescriptorPool.hpp
     src/graphicsPipeline/DescriptorSetLayout.hpp
     src/graphicsPipeline/GraphicsPipeline.hpp
+    src/graphicsPipeline/Image.hpp
     src/graphicsPipeline/RenderPass.hpp
-    src/graphicsPipeline/TextureImage.hpp
     src/graphicsPipeline/TextureSampler.hpp
     src/graphicsPipeline/UniformBufferObject.hpp
     src/graphicsPipeline/Vertex.hpp

@@ -3,6 +3,7 @@
 #define GLFW_INCLUDE_VULKAN
 #include <GLFW/glfw3.h>
 #define GLM_FORCE_DEFAULT_ALIGNED_GENTYPES
+#define GLM_FORCE_DEPTH_ZERO_TO_ONE
 #include <glm.hpp>
 #include <gtc/matrix_transform.hpp>
 
@@ -27,13 +28,19 @@ void HelloTriangleApplication::init()
     renderPass = std::make_unique<RenderPass>();
     descriptorSetLayout = std::make_unique<DescriptorSetLayout>();
     graphicsPipeline = std::make_unique<GraphicsPipeline>();
-    framebuffers = std::make_unique<Framebuffers>();
     commandPool = std::make_unique<CommandPool>();
-    textureImage = std::make_unique<TextureImage>(
+    depthImage = std::make_unique<Image>(
+        getSwapChain().getSwapChainExtent().width, getSwapChain().getSwapChainExtent().height, findDepthFormat(),
+        VK_IMAGE_TILING_OPTIMAL, VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT
+    );
+    depthImage->createImageView( VK_IMAGE_ASPECT_DEPTH_BIT );
+    depthImage->transitionLayout( VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL );
+    framebuffers = std::make_unique<Framebuffers>();
+    textureImage = std::make_unique<Image>(
         "textures/texture.jpg", VK_FORMAT_R8G8B8A8_SRGB, VK_IMAGE_TILING_OPTIMAL,
         VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_SAMPLED_BIT, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT
     );
-    textureImage->createImageView();
+    textureImage->createImageView( VK_IMAGE_ASPECT_COLOR_BIT );
     createVertexBuffer();
     createIndexBuffer();
     createUniformBuffers();
@@ -144,6 +151,7 @@ void HelloTriangleApplication::recreateSwapChain()
     vkDeviceWaitIdle( getLogicalDevice().getDeviceRef() );
 
     framebuffers.reset();
+    depthImage.reset();
     for( auto& imageView : imageViews )
     {
         imageView.reset();
@@ -152,6 +160,12 @@ void HelloTriangleApplication::recreateSwapChain()
 
     swapChain = std::make_unique<SwapChain>();
     createImageViews();
+    depthImage = std::make_unique<Image>(
+        getSwapChain().getSwapChainExtent().width, getSwapChain().getSwapChainExtent().height, findDepthFormat(),
+        VK_IMAGE_TILING_OPTIMAL, VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT
+    );
+    depthImage->createImageView( VK_IMAGE_ASPECT_DEPTH_BIT );
+    depthImage->transitionLayout( VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL );
     framebuffers = std::make_unique<Framebuffers>();
 }
 
@@ -175,13 +189,21 @@ void HelloTriangleApplication::updateUniformBuffer( uint32_t currentImage )
     uniformBuffers[currentImage]->copyTo( &ubo );
 }
 
+VkFormat HelloTriangleApplication::findDepthFormat()
+{
+    return getPhysicalDevice().findSupportedFormat(
+        { VK_FORMAT_D32_SFLOAT, VK_FORMAT_D32_SFLOAT_S8_UINT, VK_FORMAT_D24_UNORM_S8_UINT }, VK_IMAGE_TILING_OPTIMAL,
+        VK_FORMAT_FEATURE_DEPTH_STENCIL_ATTACHMENT_BIT
+    );
+}
+
 void HelloTriangleApplication::createImageViews()
 {
     imageViews.resize( getSwapChain().getSwapChainImages().size() );
     for( size_t i = 0; i < getSwapChain().getSwapChainImages().size(); i++ )
     {
         imageViews[i] = std::make_unique<ImageView>(
-            getSwapChain().getSwapChainImages()[i], getSwapChain().getSwapChainImageFormat()
+            getSwapChain().getSwapChainImages()[i], getSwapChain().getSwapChainImageFormat(), VK_IMAGE_ASPECT_COLOR_BIT
         );
     }
 }

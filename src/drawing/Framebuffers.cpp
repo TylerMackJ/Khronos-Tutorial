@@ -2,6 +2,8 @@
 
 #include "HelloTriangleApplication.hpp"
 
+#include <array>
+
 using App = HelloTriangleApplication;
 
 Framebuffers::Framebuffers()
@@ -12,13 +14,15 @@ Framebuffers::Framebuffers()
 
     for( size_t i = 0; i < App::get().getSwapChain().getSwapChainImages().size(); i++ )
     {
-        VkImageView attachments[] = { App::get().getImageViews()[i]->getImageView() };
+        std::array<VkImageView, 2> attachments = {
+            App::get().getImageViews()[i]->getImageView(), App::get().getDepthImage().getImageView()
+        };
 
         VkFramebufferCreateInfo framebufferInfo{};
         framebufferInfo.sType = VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO;
         framebufferInfo.renderPass = App::get().getRenderPass().getRenderPass();
-        framebufferInfo.attachmentCount = 1;
-        framebufferInfo.pAttachments = attachments;
+        framebufferInfo.attachmentCount = static_cast<uint32_t>( attachments.size() );
+        framebufferInfo.pAttachments = attachments.data();
         framebufferInfo.width = App::get().getSwapChain().getSwapChainExtent().width;
         framebufferInfo.height = App::get().getSwapChain().getSwapChainExtent().height;
         framebufferInfo.layers = 1;

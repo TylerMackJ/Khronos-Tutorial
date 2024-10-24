@@ -32,6 +32,9 @@ public:
     QueueFamilyIndices getQueueFamilyIndices();
     SwapChainSupportDetails getSwapChainSupportDetails();
     const VkPhysicalDeviceProperties& const getProperties() { return properties; }
+    VkFormat findSupportedFormat(
+        const std::vector<VkFormat>& candidates, VkImageTiling tiling, VkFormatFeatureFlags features
+    );
 
 private:
     int rateDeviceSuitability( VkPhysicalDevice device );

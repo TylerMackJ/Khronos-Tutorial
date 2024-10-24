@@ -13,8 +13,8 @@
 #include "graphicsPipeline/DescriptorPool.hpp"
 #include "graphicsPipeline/DescriptorSetLayout.hpp"
 #include "graphicsPipeline/GraphicsPipeline.hpp"
+#include "graphicsPipeline/Image.hpp"
 #include "graphicsPipeline/RenderPass.hpp"
-#include "graphicsPipeline/TextureImage.hpp"
 #include "graphicsPipeline/TextureSampler.hpp"
 #include "graphicsPipeline/UniformBufferObject.hpp"
 #include "graphicsPipeline/Vertex.hpp"
@@ -69,7 +69,8 @@ private:
     std::unique_ptr<Surface> surface;
     std::unique_ptr<SwapChain> swapChain;
     std::unique_ptr<SyncObjects> syncObjects;
-    std::unique_ptr<TextureImage> textureImage;
+    std::unique_ptr<Image> textureImage;
+    std::unique_ptr<Image> depthImage;
     std::unique_ptr<TextureSampler> textureSampler;
     std::unique_ptr<Window> window;
     std::vector<VkDescriptorSet> descriptorSets;
@@ -87,6 +88,7 @@ public:
     Framebuffers& getFramebuffers() { return *framebuffers; }
     GLFWInit& getGLFWInit() { return *glfw; }
     std::vector<std::unique_ptr<ImageView>>& getImageViews() { return imageViews; }
+    Image& getDepthImage() { return *depthImage; }
     GraphicsPipeline& getGraphicsPipeline() { return *graphicsPipeline; }
     Instance& getInstance() { return *instance; }
     LogicalDevice& getLogicalDevice() { return *logicalDevice; }
@@ -97,6 +99,8 @@ public:
     SyncObjects& getSyncObjects() { return *syncObjects; }
     Window& getWindow() { return *window; }
     std::vector<VkDescriptorSet>& getDescriptorSets() { return descriptorSets; }
+
+    VkFormat findDepthFormat();
 
 public:
     const uint32_t MAX_FRAMES_IN_FLIGHT = 3;
@@ -114,13 +118,18 @@ public:
 #endif // NDEBUG
 
     const std::vector<Vertex> vertices = {
-        { { -0.5f, -0.5f }, { 1.0f, 0.0f, 0.0f }, { 1.0f, 0.0f } },
-        { { +0.5f, -0.5f }, { 0.0f, 1.0f, 0.0f }, { 0.0f, 0.0f } },
-        { { +0.5f, +0.5f }, { 0.0f, 0.0f, 1.0f }, { 0.0f, 1.0f } },
-        { { -0.5f, +0.5f }, { 1.0f, 1.0f, 1.0f }, { 1.0f, 1.0f } }
+        { { -0.5f, -0.5f, +0.0f }, { 1.0f, 0.0f, 0.0f }, { 1.0f, 0.0f } },
+        { { +0.5f, -0.5f, +0.0f }, { 0.0f, 1.0f, 0.0f }, { 0.0f, 0.0f } },
+        { { +0.5f, +0.5f, +0.0f }, { 0.0f, 0.0f, 1.0f }, { 0.0f, 1.0f } },
+        { { -0.5f, +0.5f, +0.0f }, { 1.0f, 1.0f, 1.0f }, { 1.0f, 1.0f } },
+
+        { { -0.5f, -0.5f, -0.5f }, { 1.0f, 0.0f, 0.0f }, { 1.0f, 0.0f } },
+        { { +0.5f, -0.5f, -0.5f }, { 0.0f, 1.0f, 0.0f }, { 0.0f, 0.0f } },
+        { { +0.5f, +0.5f, -0.5f }, { 0.0f, 0.0f, 1.0f }, { 0.0f, 1.0f } },
+        { { -0.5f, +0.5f, -0.5f }, { 1.0f, 1.0f, 1.0f }, { 1.0f, 1.0f } }
     };
 
-    const std::vector<uint16_t> indices = { 0, 1, 2, 2, 3, 0, 0, 3, 4 };
+    const std::vector<uint16_t> indices = { 0, 1, 2, 2, 3, 0, 4, 5, 6, 6, 7, 4 };
 
     static std::vector<char> readFile( const std::string& filename );
 
