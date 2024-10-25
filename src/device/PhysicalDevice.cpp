@@ -15,10 +15,10 @@ PhysicalDevice::PhysicalDevice() : physicalDevice( VK_NULL_HANDLE )
     {
         throw std::runtime_error( "failed to find GPUs with Vulkan support!" );
     }
-    std::vector<VkPhysicalDevice> devices( deviceCount );
+    std::vector< VkPhysicalDevice > devices( deviceCount );
     vkEnumeratePhysicalDevices( App::get().getInstance().getInstanceRef(), &deviceCount, devices.data() );
 
-    std::multimap<int, VkPhysicalDevice> candidates;
+    std::multimap< int, VkPhysicalDevice > candidates;
 
     for( const auto& device : devices )
     {
@@ -48,7 +48,7 @@ PhysicalDevice::SwapChainSupportDetails PhysicalDevice::getSwapChainSupportDetai
 }
 
 VkFormat PhysicalDevice::findSupportedFormat(
-    const std::vector<VkFormat>& candidates, VkImageTiling tiling, VkFormatFeatureFlags features
+    const std::vector< VkFormat >& candidates, VkImageTiling tiling, VkFormatFeatureFlags features
 )
 {
     for( VkFormat format : candidates )
@@ -109,7 +109,7 @@ PhysicalDevice::QueueFamilyIndices PhysicalDevice::findQueueFamilies( VkPhysical
     uint32_t queueFamilyCount = 0;
     vkGetPhysicalDeviceQueueFamilyProperties( device, &queueFamilyCount, nullptr );
 
-    std::vector<VkQueueFamilyProperties> queueFamilies( queueFamilyCount );
+    std::vector< VkQueueFamilyProperties > queueFamilies( queueFamilyCount );
     vkGetPhysicalDeviceQueueFamilyProperties( device, &queueFamilyCount, queueFamilies.data() );
 
     int i = 0;
@@ -140,10 +140,12 @@ bool PhysicalDevice::checkDeviceExtensionSupport( VkPhysicalDevice device )
     uint32_t extensionCount;
     vkEnumerateDeviceExtensionProperties( device, nullptr, &extensionCount, nullptr );
 
-    std::vector<VkExtensionProperties> availableExtensions( extensionCount );
+    std::vector< VkExtensionProperties > availableExtensions( extensionCount );
     vkEnumerateDeviceExtensionProperties( device, nullptr, &extensionCount, availableExtensions.data() );
 
-    std::set<std::string> requiredExtensions( App::get().deviceExtensions.begin(), App::get().deviceExtensions.end() );
+    std::set< std::string > requiredExtensions(
+        App::get().deviceExtensions.begin(), App::get().deviceExtensions.end()
+    );
 
     for( const auto& extension : availableExtensions )
     {

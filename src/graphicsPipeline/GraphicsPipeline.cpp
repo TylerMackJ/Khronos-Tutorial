@@ -31,7 +31,7 @@ GraphicsPipeline::GraphicsPipeline()
     VkPipelineVertexInputStateCreateInfo vertexInputInfo{};
     vertexInputInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO;
     vertexInputInfo.vertexBindingDescriptionCount = 1;
-    vertexInputInfo.vertexAttributeDescriptionCount = static_cast<uint32_t>( attributeDescriptions.size() );
+    vertexInputInfo.vertexAttributeDescriptionCount = static_cast< uint32_t >( attributeDescriptions.size() );
     vertexInputInfo.pVertexBindingDescriptions = &bindingDescription;
     vertexInputInfo.pVertexAttributeDescriptions = attributeDescriptions.data();
 
@@ -101,10 +101,10 @@ GraphicsPipeline::GraphicsPipeline()
     depthStencil.front = {};
     depthStencil.back = {};
 
-    std::vector<VkDynamicState> dynamicStates = { VK_DYNAMIC_STATE_VIEWPORT, VK_DYNAMIC_STATE_SCISSOR };
+    std::vector< VkDynamicState > dynamicStates = { VK_DYNAMIC_STATE_VIEWPORT, VK_DYNAMIC_STATE_SCISSOR };
     VkPipelineDynamicStateCreateInfo dynamicState{};
     dynamicState.sType = VK_STRUCTURE_TYPE_PIPELINE_DYNAMIC_STATE_CREATE_INFO;
-    dynamicState.dynamicStateCount = static_cast<uint32_t>( dynamicStates.size() );
+    dynamicState.dynamicStateCount = static_cast< uint32_t >( dynamicStates.size() );
     dynamicState.pDynamicStates = dynamicStates.data();
 
     VkPipelineLayoutCreateInfo pipelineLayoutInfo{};
@@ -156,12 +156,12 @@ GraphicsPipeline::~GraphicsPipeline()
     vkDestroyPipelineLayout( App::get().getLogicalDevice().getDeviceRef(), pipelineLayout, nullptr );
 }
 
-VkShaderModule GraphicsPipeline::createShaderModule( const std::vector<char>& code )
+VkShaderModule GraphicsPipeline::createShaderModule( const std::vector< char >& code )
 {
     VkShaderModuleCreateInfo createInfo{};
     createInfo.sType = VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO;
     createInfo.codeSize = code.size();
-    createInfo.pCode = reinterpret_cast<const uint32_t*>( code.data() );
+    createInfo.pCode = reinterpret_cast< const uint32_t* >( code.data() );
 
     VkShaderModule shaderModule;
     if( vkCreateShaderModule( App::get().getLogicalDevice().getDeviceRef(), &createInfo, nullptr, &shaderModule ) !=

@@ -11,12 +11,12 @@ public:
     SyncObjects();
     ~SyncObjects();
 
-    std::vector<VkSemaphore>& getImageAvailableSemaphores() { return imageAvailableSemaphores; }
-    std::vector<VkSemaphore>& getRenderFinishedSemaphores() { return renderFinishedSemaphores; }
-    std::vector<VkFence>& getInFlightFences() { return inFlightFences; }
+    std::vector< VkSemaphore >& getImageAvailableSemaphores() { return imageAvailableSemaphores; }
+    std::vector< VkSemaphore >& getRenderFinishedSemaphores() { return renderFinishedSemaphores; }
+    std::vector< VkFence >& getInFlightFences() { return inFlightFences; }
 
 private:
-    std::vector<VkSemaphore> imageAvailableSemaphores;
-    std::vector<VkSemaphore> renderFinishedSemaphores;
-    std::vector<VkFence> inFlightFences;
+    std::vector< VkSemaphore > imageAvailableSemaphores;
+    std::vector< VkSemaphore > renderFinishedSemaphores;
+    std::vector< VkFence > inFlightFences;
 };

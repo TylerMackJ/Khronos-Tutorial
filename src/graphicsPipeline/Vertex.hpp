@@ -31,9 +31,9 @@ struct Vertex
         return bindingDescription;
     }
 
-    static std::array<VkVertexInputAttributeDescription, 3> getAttributeDescriptions()
+    static std::array< VkVertexInputAttributeDescription, 3 > getAttributeDescriptions()
     {
-        std::array<VkVertexInputAttributeDescription, 3> attributeDescriptions{};
+        std::array< VkVertexInputAttributeDescription, 3 > attributeDescriptions{};
 
         attributeDescriptions[0].binding = 0;
         attributeDescriptions[0].location = 0;
@@ -56,12 +56,12 @@ struct Vertex
 
 namespace std
 {
-    template <> struct hash<Vertex>
+    template <> struct hash< Vertex >
     {
         size_t operator()( Vertex const& vertex ) const
         {
-            return ( ( hash<glm::vec3>()( vertex.pos ) ^ ( hash<glm::vec3>()( vertex.color ) << 1 ) ) >> 1 ) ^
-                   ( hash<glm::vec2>()( vertex.texCoord ) << 1 );
+            return ( ( hash< glm::vec3 >()( vertex.pos ) ^ ( hash< glm::vec3 >()( vertex.color ) << 1 ) ) >> 1 ) ^
+                   ( hash< glm::vec2 >()( vertex.texCoord ) << 1 );
         }
     };
 } // namespace std

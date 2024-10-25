@@ -10,8 +10,8 @@ LogicalDevice::LogicalDevice()
 {
     PhysicalDevice::QueueFamilyIndices indices = App::get().getPhysicalDevice().getQueueFamilyIndices();
 
-    std::vector<VkDeviceQueueCreateInfo> queueCreateInfos;
-    std::set<uint32_t> uniqueQueueFamilies = { indices.graphicsFamily.value(), indices.presentFamily.value() };
+    std::vector< VkDeviceQueueCreateInfo > queueCreateInfos;
+    std::set< uint32_t > uniqueQueueFamilies = { indices.graphicsFamily.value(), indices.presentFamily.value() };
 
     float queuePriority = 1.0f;
     for( uint32_t queueFamily : uniqueQueueFamilies )
@@ -30,13 +30,13 @@ LogicalDevice::LogicalDevice()
     VkDeviceCreateInfo createInfo{};
     createInfo.sType = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO;
     createInfo.pQueueCreateInfos = queueCreateInfos.data();
-    createInfo.queueCreateInfoCount = static_cast<uint32_t>( queueCreateInfos.size() );
+    createInfo.queueCreateInfoCount = static_cast< uint32_t >( queueCreateInfos.size() );
     createInfo.pEnabledFeatures = &deviceFeatures;
-    createInfo.enabledExtensionCount = static_cast<uint32_t>( App::get().deviceExtensions.size() );
+    createInfo.enabledExtensionCount = static_cast< uint32_t >( App::get().deviceExtensions.size() );
     createInfo.ppEnabledExtensionNames = App::get().deviceExtensions.data();
     if( App::get().enableValidationLayers )
     {
-        createInfo.enabledLayerCount = static_cast<uint32_t>( App::get().validationLayers.size() );
+        createInfo.enabledLayerCount = static_cast< uint32_t >( App::get().validationLayers.size() );
         createInfo.ppEnabledLayerNames = App::get().validationLayers.data();
     }
     else

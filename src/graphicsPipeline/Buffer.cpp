@@ -44,7 +44,7 @@ Buffer::~Buffer()
 
 void Buffer::mapMemory( VkDeviceSize offset, VkDeviceSize size, VkMemoryMapFlags flags )
 {
-    bufferMemoryMap = std::make_unique<BufferMemoryMap>( bufferMemory, offset, size, flags );
+    bufferMemoryMap = std::make_unique< BufferMemoryMap >( bufferMemory, offset, size, flags );
 }
 
 void Buffer::copyTo( const void* data )

@@ -13,11 +13,11 @@ public:
 
     void recordCommandBuffer( VkCommandBuffer commandBuffer, uint32_t imageIndex );
 
-    std::vector<VkCommandBuffer>& getCommandBuffers() { return commandBuffers; }
+    std::vector< VkCommandBuffer >& getCommandBuffers() { return commandBuffers; }
 
     static VkCommandBuffer beginSingleTimeCommands();
     static void endSingleTimeCommands( VkCommandBuffer commandBuffer );
 
 private:
-    std::vector<VkCommandBuffer> commandBuffers;
+    std::vector< VkCommandBuffer > commandBuffers;
 };

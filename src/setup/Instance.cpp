@@ -30,13 +30,13 @@ Instance::Instance()
     createInfo.pApplicationInfo = &appInfo;
 
     auto extensions = getRequiredExtensions();
-    createInfo.enabledExtensionCount = static_cast<uint32_t>( extensions.size() );
+    createInfo.enabledExtensionCount = static_cast< uint32_t >( extensions.size() );
     createInfo.ppEnabledExtensionNames = extensions.data();
 
     VkDebugUtilsMessengerCreateInfoEXT debugCreateInfo{};
     if( App::get().enableValidationLayers )
     {
-        createInfo.enabledLayerCount = static_cast<uint32_t>( App::get().validationLayers.size() );
+        createInfo.enabledLayerCount = static_cast< uint32_t >( App::get().validationLayers.size() );
         createInfo.ppEnabledLayerNames = App::get().validationLayers.data();
 
         DebugMessenger::populateDebugMessengerCreateInfo( debugCreateInfo );
@@ -66,7 +66,7 @@ bool Instance::checkValidationLayerSupport()
     uint32_t layerCount;
     vkEnumerateInstanceLayerProperties( &layerCount, nullptr );
 
-    std::vector<VkLayerProperties> availableLayers( layerCount );
+    std::vector< VkLayerProperties > availableLayers( layerCount );
     vkEnumerateInstanceLayerProperties( &layerCount, availableLayers.data() );
 
     for( const char* layerName : App::get().validationLayers )
@@ -91,12 +91,12 @@ bool Instance::checkValidationLayerSupport()
     return true;
 }
 
-std::vector<const char*> Instance::getRequiredExtensions()
+std::vector< const char* > Instance::getRequiredExtensions()
 {
     uint32_t glfwExtensionCount = 0;
     const char** glfwExtensions = glfwGetRequiredInstanceExtensions( &glfwExtensionCount );
 
-    std::vector<const char*> extensions( glfwExtensions, glfwExtensions + glfwExtensionCount );
+    std::vector< const char* > extensions( glfwExtensions, glfwExtensions + glfwExtensionCount );
 
     if( App::get().enableValidationLayers )
     {
@@ -110,7 +110,7 @@ void Instance::printExtensions()
 {
     uint32_t extensionCount = 0;
     vkEnumerateInstanceExtensionProperties( nullptr, &extensionCount, nullptr );
-    std::vector<VkExtensionProperties> extensions( extensionCount );
+    std::vector< VkExtensionProperties > extensions( extensionCount );
     vkEnumerateInstanceExtensionProperties( nullptr, &extensionCount, extensions.data() );
 
     std::cout << "available extensions:" << std::endl;

@@ -15,7 +15,7 @@ public:
     const VkPipelineLayout& getPipelineLayout() const { return pipelineLayout; }
 
 private:
-    VkShaderModule createShaderModule( const std::vector<char>& code );
+    VkShaderModule createShaderModule( const std::vector< char >& code );
 
     VkPipeline graphicsPipeline;
     VkPipelineLayout pipelineLayout;

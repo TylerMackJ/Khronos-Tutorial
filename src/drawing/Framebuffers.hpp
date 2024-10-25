@@ -11,8 +11,8 @@ public:
     Framebuffers();
     ~Framebuffers();
 
-    std::vector<VkFramebuffer>& getFramebuffers() { return swapChainFramebuffers; }
+    std::vector< VkFramebuffer >& getFramebuffers() { return swapChainFramebuffers; }
 
 private:
-    std::vector<VkFramebuffer> swapChainFramebuffers;
+    std::vector< VkFramebuffer > swapChainFramebuffers;
 };

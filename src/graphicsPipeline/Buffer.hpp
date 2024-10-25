@@ -26,5 +26,5 @@ public:
 private:
     VkBuffer buffer;
     VkDeviceMemory bufferMemory;
-    std::unique_ptr<BufferMemoryMap> bufferMemoryMap;
+    std::unique_ptr< BufferMemoryMap > bufferMemoryMap;
 };
