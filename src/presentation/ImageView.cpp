@@ -4,7 +4,7 @@
 
 using App = HelloTriangleApplication;
 
-ImageView::ImageView( VkImage image, VkFormat format, VkImageAspectFlags aspectFlags )
+ImageView::ImageView( VkImage image, VkFormat format, VkImageAspectFlags aspectFlags, uint32_t mipLevels )
 {
     VkImageViewCreateInfo createInfo{};
     createInfo.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
@@ -17,7 +17,7 @@ ImageView::ImageView( VkImage image, VkFormat format, VkImageAspectFlags aspectF
     createInfo.components.a = VK_COMPONENT_SWIZZLE_IDENTITY;
     createInfo.subresourceRange.aspectMask = aspectFlags;
     createInfo.subresourceRange.baseMipLevel = 0;
-    createInfo.subresourceRange.levelCount = 1;
+    createInfo.subresourceRange.levelCount = mipLevels;
     createInfo.subresourceRange.baseArrayLayer = 0;
     createInfo.subresourceRange.layerCount = 1;
 

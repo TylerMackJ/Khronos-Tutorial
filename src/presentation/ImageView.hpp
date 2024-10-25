@@ -6,7 +6,7 @@
 class ImageView
 {
 public:
-    ImageView( VkImage image, VkFormat format, VkImageAspectFlags aspectFlags );
+    ImageView( VkImage image, VkFormat format, VkImageAspectFlags aspectFlags, uint32_t mipLevels );
     ~ImageView();
 
     const VkImageView& const getImageView() { return imageView; }

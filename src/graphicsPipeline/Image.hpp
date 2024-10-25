@@ -12,6 +12,7 @@ public:
     Image(
         uint32_t width,
         uint32_t height,
+        uint32_t mipLevels,
         VkFormat format,
         VkImageTiling tiling,
         VkImageUsageFlags usage,
@@ -36,16 +37,19 @@ public:
 
 private:
     void createImage();
-    bool hasStencilComponent( VkFormat format );
+    void generateMipmaps();
+
+    static bool hasStencilComponent( VkFormat format );
 
     VkImage image;
     VkDeviceMemory imageMemory;
+    uint32_t mipLevels;
     uint32_t width;
     uint32_t height;
     VkFormat format;
     VkImageTiling tiling;
     VkImageUsageFlags usage;
     VkMemoryPropertyFlags properties;
-    std::unique_ptr<Buffer> stagingBuffer;
-    std::unique_ptr<ImageView> imageView;
+    std::unique_ptr< Buffer > stagingBuffer;
+    std::unique_ptr< ImageView > imageView;
 };
