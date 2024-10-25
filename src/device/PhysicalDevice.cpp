@@ -7,7 +7,7 @@
 
 using App = HelloTriangleApplication;
 
-PhysicalDevice::PhysicalDevice() : physicalDevice( VK_NULL_HANDLE )
+PhysicalDevice::PhysicalDevice() : physicalDevice( VK_NULL_HANDLE ), msaaSamples( VK_SAMPLE_COUNT_1_BIT )
 {
     uint32_t deviceCount = 0;
     vkEnumeratePhysicalDevices( App::get().getInstance().getInstanceRef(), &deviceCount, nullptr );
@@ -34,7 +34,36 @@ PhysicalDevice::PhysicalDevice() : physicalDevice( VK_NULL_HANDLE )
     {
         throw std::runtime_error( "failed to find a suitable GPU!" );
     }
+
     vkGetPhysicalDeviceProperties( physicalDevice, &properties );
+
+    // Get max usable sample count
+    VkSampleCountFlags counts =
+        properties.limits.framebufferColorSampleCounts & properties.limits.framebufferDepthSampleCounts;
+    if( counts & VK_SAMPLE_COUNT_64_BIT )
+    {
+        msaaSamples = VK_SAMPLE_COUNT_64_BIT;
+    }
+    else if( counts & VK_SAMPLE_COUNT_32_BIT )
+    {
+        msaaSamples = VK_SAMPLE_COUNT_32_BIT;
+    }
+    else if( counts & VK_SAMPLE_COUNT_16_BIT )
+    {
+        msaaSamples = VK_SAMPLE_COUNT_16_BIT;
+    }
+    else if( counts & VK_SAMPLE_COUNT_8_BIT )
+    {
+        msaaSamples = VK_SAMPLE_COUNT_8_BIT;
+    }
+    else if( counts & VK_SAMPLE_COUNT_4_BIT )
+    {
+        msaaSamples = VK_SAMPLE_COUNT_4_BIT;
+    }
+    else if( counts & VK_SAMPLE_COUNT_2_BIT )
+    {
+        msaaSamples = VK_SAMPLE_COUNT_2_BIT;
+    }
 }
 
 PhysicalDevice::QueueFamilyIndices PhysicalDevice::getQueueFamilyIndices()

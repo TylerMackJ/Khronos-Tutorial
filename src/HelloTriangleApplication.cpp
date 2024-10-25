@@ -29,10 +29,22 @@ void HelloTriangleApplication::init()
     descriptorSetLayout = std::make_unique< DescriptorSetLayout >();
     graphicsPipeline = std::make_unique< GraphicsPipeline >();
     commandPool = std::make_unique< CommandPool >();
+    colorImage = std::make_unique< Image >(
+        getSwapChain().getSwapChainExtent().width,
+        getSwapChain().getSwapChainExtent().height,
+        1,
+        getPhysicalDevice().getMSAASamples(),
+        getSwapChain().getSwapChainImageFormat(),
+        VK_IMAGE_TILING_OPTIMAL,
+        VK_IMAGE_USAGE_TRANSIENT_ATTACHMENT_BIT | VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT,
+        VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT
+    );
+    colorImage->createImageView( VK_IMAGE_ASPECT_COLOR_BIT );
     depthImage = std::make_unique< Image >(
         getSwapChain().getSwapChainExtent().width,
         getSwapChain().getSwapChainExtent().height,
         1,
+        getPhysicalDevice().getMSAASamples(),
         findDepthFormat(),
         VK_IMAGE_TILING_OPTIMAL,
         VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT,
@@ -43,6 +55,7 @@ void HelloTriangleApplication::init()
     framebuffers = std::make_unique< Framebuffers >();
     textureImage = std::make_unique< Image >(
         "textures/viking_room.png",
+        VK_SAMPLE_COUNT_1_BIT,
         VK_FORMAT_R8G8B8A8_SRGB,
         VK_IMAGE_TILING_OPTIMAL,
         VK_IMAGE_USAGE_TRANSFER_SRC_BIT | VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_SAMPLED_BIT,
@@ -167,6 +180,7 @@ void HelloTriangleApplication::recreateSwapChain()
     vkDeviceWaitIdle( getLogicalDevice().getDeviceRef() );
 
     framebuffers.reset();
+    colorImage.reset();
     depthImage.reset();
     for( auto& imageView : imageViews )
     {
@@ -176,10 +190,22 @@ void HelloTriangleApplication::recreateSwapChain()
 
     swapChain = std::make_unique< SwapChain >();
     createImageViews();
+    colorImage = std::make_unique< Image >(
+        getSwapChain().getSwapChainExtent().width,
+        getSwapChain().getSwapChainExtent().height,
+        1,
+        getPhysicalDevice().getMSAASamples(),
+        getSwapChain().getSwapChainImageFormat(),
+        VK_IMAGE_TILING_OPTIMAL,
+        VK_IMAGE_USAGE_TRANSIENT_ATTACHMENT_BIT | VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT,
+        VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT
+    );
+    colorImage->createImageView( VK_IMAGE_ASPECT_COLOR_BIT );
     depthImage = std::make_unique< Image >(
         getSwapChain().getSwapChainExtent().width,
         getSwapChain().getSwapChainExtent().height,
         1,
+        getPhysicalDevice().getMSAASamples(),
         findDepthFormat(),
         VK_IMAGE_TILING_OPTIMAL,
         VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT,

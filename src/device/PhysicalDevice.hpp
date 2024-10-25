@@ -35,6 +35,7 @@ public:
     VkFormat findSupportedFormat(
         const std::vector< VkFormat >& candidates, VkImageTiling tiling, VkFormatFeatureFlags features
     );
+    const VkSampleCountFlagBits& const getMSAASamples() { return msaaSamples; }
 
 private:
     int rateDeviceSuitability( VkPhysicalDevice device );
@@ -44,4 +45,5 @@ private:
 
     VkPhysicalDevice physicalDevice;
     VkPhysicalDeviceProperties properties;
+    VkSampleCountFlagBits msaaSamples;
 };

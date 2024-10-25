@@ -15,26 +15,28 @@ Image::Image(
     uint32_t width,
     uint32_t height,
     uint32_t mipLevels,
+    VkSampleCountFlagBits numSamples,
     VkFormat format,
     VkImageTiling tiling,
     VkImageUsageFlags usage,
     VkMemoryPropertyFlags properties
 )
-    : width( width ), height( height ), mipLevels( mipLevels ), format( format ), tiling( tiling ), usage( usage ),
-      properties( properties )
+    : width( width ), height( height ), mipLevels( mipLevels ), numSamples( numSamples ), format( format ),
+      tiling( tiling ), usage( usage ), properties( properties )
 {
     createImage();
 }
 
 Image::Image(
     const char* filename,
+    VkSampleCountFlagBits numSamples,
     VkFormat format,
     VkImageTiling tiling,
     VkImageUsageFlags usage,
     VkMemoryPropertyFlags properties
 )
-    : width( 0 ), height( 0 ), mipLevels( 0 ), format( format ), tiling( tiling ), usage( usage ),
-      properties( properties )
+    : width( 0 ), height( 0 ), mipLevels( 0 ), numSamples( numSamples ), format( format ), tiling( tiling ),
+      usage( usage ), properties( properties )
 {
     int texWidth, texHeight, texChannels;
     stbi_uc* pixels = stbi_load( filename, &texWidth, &texHeight, &texChannels, STBI_rgb_alpha );
@@ -82,7 +84,7 @@ void Image::createImage()
     imageInfo.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
     imageInfo.usage = usage;
     imageInfo.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
-    imageInfo.samples = VK_SAMPLE_COUNT_1_BIT;
+    imageInfo.samples = numSamples;
     imageInfo.flags = 0;
 
     if( vkCreateImage( App::get().getLogicalDevice().getDeviceRef(), &imageInfo, nullptr, &image ) != VK_SUCCESS )

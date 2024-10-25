@@ -14,8 +14,10 @@ Framebuffers::Framebuffers()
 
     for( size_t i = 0; i < App::get().getSwapChain().getSwapChainImages().size(); i++ )
     {
-        std::array< VkImageView, 2 > attachments = {
-            App::get().getImageViews()[i]->getImageView(), App::get().getDepthImage().getImageView()
+        std::array< VkImageView, 3 > attachments = {
+            App::get().getColorImage().getImageView(),
+            App::get().getDepthImage().getImageView(),
+            App::get().getImageViews()[i]->getImageView()
         };
 
         VkFramebufferCreateInfo framebufferInfo{};

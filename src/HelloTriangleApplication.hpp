@@ -63,6 +63,7 @@ private:
     std::unique_ptr< Framebuffers > framebuffers;
     std::unique_ptr< GLFWInit > glfw;
     std::unique_ptr< GraphicsPipeline > graphicsPipeline;
+    std::unique_ptr< Image > colorImage;
     std::unique_ptr< Image > depthImage;
     std::unique_ptr< Image > textureImage;
     std::unique_ptr< Instance > instance;
@@ -90,6 +91,7 @@ public:
     Framebuffers& getFramebuffers() { return *framebuffers; }
     GLFWInit& getGLFWInit() { return *glfw; }
     GraphicsPipeline& getGraphicsPipeline() { return *graphicsPipeline; }
+    Image& getColorImage() { return *colorImage; }
     Image& getDepthImage() { return *depthImage; }
     Instance& getInstance() { return *instance; }
     LogicalDevice& getLogicalDevice() { return *logicalDevice; }
