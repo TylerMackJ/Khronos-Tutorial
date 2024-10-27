@@ -1,6 +1,5 @@
-.vscode/launch.json
-.vscode/settings.json
-build/
+**/.vscode/
+**/build/
 external/
-models/*
-textures/*
+**/models/
+**/textures/

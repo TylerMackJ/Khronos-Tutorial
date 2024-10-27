@@ -3,6 +3,9 @@
 #include <iostream>
 #include <vector>
 
+#include <ModelLoader/Model.hpp>
+#include <ModelLoader/Vertex.hpp>
+
 #include "device/LogicalDevice.hpp"
 #include "device/PhysicalDevice.hpp"
 #include "drawing/CommandBuffer.hpp"
@@ -17,8 +20,6 @@
 #include "graphicsPipeline/RenderPass.hpp"
 #include "graphicsPipeline/TextureSampler.hpp"
 #include "graphicsPipeline/UniformBufferObject.hpp"
-#include "graphicsPipeline/Vertex.hpp"
-#include "loader/ModelLoader.hpp"
 #include "presentation/ImageView.hpp"
 #include "presentation/Surface.hpp"
 #include "presentation/SwapChain.hpp"
@@ -68,7 +69,7 @@ private:
     std::unique_ptr< Image > textureImage;
     std::unique_ptr< Instance > instance;
     std::unique_ptr< LogicalDevice > logicalDevice;
-    std::unique_ptr< ModelLoader > vikingRoomModel;
+    std::unique_ptr< ModelLoader::Model > vikingRoomModel;
     std::unique_ptr< PhysicalDevice > physicalDevice;
     std::unique_ptr< RenderPass > renderPass;
     std::unique_ptr< Surface > surface;
@@ -95,7 +96,7 @@ public:
     Image& getDepthImage() { return *depthImage; }
     Instance& getInstance() { return *instance; }
     LogicalDevice& getLogicalDevice() { return *logicalDevice; }
-    ModelLoader& getVikingRoomModel() { return *vikingRoomModel; }
+    ModelLoader::Model& getVikingRoomModel() { return *vikingRoomModel; }
     PhysicalDevice& getPhysicalDevice() { return *physicalDevice; }
     RenderPass& getRenderPass() { return *renderPass; }
     Surface& getSurface() { return *surface; }

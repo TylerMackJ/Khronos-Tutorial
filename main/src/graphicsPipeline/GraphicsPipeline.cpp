@@ -1,7 +1,7 @@
 #include "GraphicsPipeline.hpp"
 
 #include "HelloTriangleApplication.hpp"
-#include "Vertex.hpp"
+#include "ModelLoader/Vertex.hpp"
 
 using App = HelloTriangleApplication;
 
@@ -25,8 +25,8 @@ GraphicsPipeline::GraphicsPipeline()
 
     VkPipelineShaderStageCreateInfo shaderStages[] = { vertShaderStageInfo, fragShaderStageInfo };
 
-    auto bindingDescription = Vertex::getBindingDescription();
-    auto attributeDescriptions = Vertex::getAttributeDescriptions();
+    auto bindingDescription = ModelLoader::Vertex::getBindingDescription();
+    auto attributeDescriptions = ModelLoader::Vertex::getAttributeDescriptions();
 
     VkPipelineVertexInputStateCreateInfo vertexInputInfo{};
     vertexInputInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO;
@@ -60,9 +60,9 @@ GraphicsPipeline::GraphicsPipeline()
 
     VkPipelineMultisampleStateCreateInfo multisampling{};
     multisampling.sType = VK_STRUCTURE_TYPE_PIPELINE_MULTISAMPLE_STATE_CREATE_INFO;
-    multisampling.sampleShadingEnable = VK_FALSE;
+    multisampling.sampleShadingEnable = VK_TRUE;
     multisampling.rasterizationSamples = App::get().getPhysicalDevice().getMSAASamples();
-    multisampling.minSampleShading = 1.0f;
+    multisampling.minSampleShading = 0.2f;
     multisampling.pSampleMask = nullptr;
     multisampling.alphaToCoverageEnable = VK_FALSE;
     multisampling.alphaToOneEnable = VK_FALSE;

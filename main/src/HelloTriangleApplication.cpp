@@ -4,8 +4,8 @@
 #include <GLFW/glfw3.h>
 #define GLM_FORCE_DEFAULT_ALIGNED_GENTYPES
 #define GLM_FORCE_DEPTH_ZERO_TO_ONE
-#include <glm.hpp>
-#include <gtc/matrix_transform.hpp>
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
 
 #include <chrono>
 #include <fstream>
@@ -62,7 +62,7 @@ void HelloTriangleApplication::init()
         VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT
     );
     textureImage->createImageView( VK_IMAGE_ASPECT_COLOR_BIT );
-    vikingRoomModel = std::make_unique< ModelLoader >( "models/viking_room.obj" );
+    vikingRoomModel = std::make_unique< ModelLoader::Model >( "models/viking_room.obj" );
     createVertexBuffer();
     createIndexBuffer();
     createUniformBuffers();
