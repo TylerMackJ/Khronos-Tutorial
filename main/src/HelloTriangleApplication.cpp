@@ -13,7 +13,7 @@
 
 HelloTriangleApplication* HelloTriangleApplication::singletonInstance = nullptr;
 
-void HelloTriangleApplication::init()
+void HelloTriangleApplication::constructor()
 {
     glfw = std::make_unique< GLFWInit >();
     window = std::make_unique< Window >();

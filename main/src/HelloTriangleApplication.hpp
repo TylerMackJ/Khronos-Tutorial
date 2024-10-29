@@ -34,6 +34,7 @@ private:
     static HelloTriangleApplication* singletonInstance;
 
     HelloTriangleApplication() {}
+    void constructor();
 
 public:
     HelloTriangleApplication( const HelloTriangleApplication& ) = delete;
@@ -44,12 +45,11 @@ public:
         if( singletonInstance == nullptr )
         {
             singletonInstance = new HelloTriangleApplication();
+            singletonInstance->constructor();
         }
 
         return *singletonInstance;
     }
-
-    void init();
 
     void run();
 
