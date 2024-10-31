@@ -7,11 +7,11 @@
 
 using App = HelloTriangleApplication;
 
-RenderPass::RenderPass()
+RenderPass::RenderPass( Device& device ) : device( device )
 {
     VkAttachmentDescription colorAttachment{};
     colorAttachment.format = App::get().getSwapChain().getSwapChainImageFormat();
-    colorAttachment.samples = App::get().getPhysicalDevice().getMSAASamples();
+    colorAttachment.samples = device.getMSAASamples();
     colorAttachment.loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR;
     colorAttachment.storeOp = VK_ATTACHMENT_STORE_OP_STORE;
     colorAttachment.stencilLoadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE;
@@ -25,7 +25,7 @@ RenderPass::RenderPass()
 
     VkAttachmentDescription depthAttachment{};
     depthAttachment.format = App::get().findDepthFormat();
-    depthAttachment.samples = App::get().getPhysicalDevice().getMSAASamples();
+    depthAttachment.samples = device.getMSAASamples();
     depthAttachment.loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR;
     depthAttachment.storeOp = VK_ATTACHMENT_STORE_OP_DONT_CARE;
     depthAttachment.stencilLoadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE;
@@ -77,11 +77,10 @@ RenderPass::RenderPass()
     renderPassInfo.dependencyCount = 1;
     renderPassInfo.pDependencies = &dependency;
 
-    if( vkCreateRenderPass( App::get().getLogicalDevice().getDeviceRef(), &renderPassInfo, nullptr, &renderPass ) !=
-        VK_SUCCESS )
+    if( vkCreateRenderPass( device, &renderPassInfo, nullptr, &renderPass ) != VK_SUCCESS )
     {
         throw std::runtime_error( "failed to create render pass!" );
     }
 }
 
-RenderPass::~RenderPass() { vkDestroyRenderPass( App::get().getLogicalDevice().getDeviceRef(), renderPass, nullptr ); }
+RenderPass::~RenderPass() { vkDestroyRenderPass( device, renderPass, nullptr ); }

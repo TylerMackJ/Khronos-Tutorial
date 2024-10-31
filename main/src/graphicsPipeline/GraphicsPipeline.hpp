@@ -8,7 +8,7 @@
 class GraphicsPipeline
 {
 public:
-    GraphicsPipeline();
+    GraphicsPipeline( Device& device );
     ~GraphicsPipeline();
 
     const VkPipeline& getPipeline() const { return graphicsPipeline; }
@@ -16,6 +16,8 @@ public:
 
 private:
     VkShaderModule createShaderModule( const std::vector< char >& code );
+
+    Device& device;
 
     VkPipeline graphicsPipeline;
     VkPipelineLayout pipelineLayout;

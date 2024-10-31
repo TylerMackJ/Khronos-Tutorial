@@ -1,12 +1,9 @@
 #include "DescriptorSetLayout.hpp"
 
-#include "HelloTriangleApplication.hpp"
-
+#include <array>
 #include <stdexcept>
 
-using App = HelloTriangleApplication;
-
-DescriptorSetLayout::DescriptorSetLayout()
+DescriptorSetLayout::DescriptorSetLayout( Device& device ) : device( device )
 {
     VkDescriptorSetLayoutBinding uboLayoutBinding{};
     uboLayoutBinding.binding = 0;
@@ -28,15 +25,10 @@ DescriptorSetLayout::DescriptorSetLayout()
     layoutInfo.bindingCount = static_cast< uint32_t >( bindings.size() );
     layoutInfo.pBindings = bindings.data();
 
-    if( vkCreateDescriptorSetLayout(
-            App::get().getLogicalDevice().getDeviceRef(), &layoutInfo, nullptr, &descriptorSetLayout
-        ) != VK_SUCCESS )
+    if( vkCreateDescriptorSetLayout( device, &layoutInfo, nullptr, &descriptorSetLayout ) != VK_SUCCESS )
     {
         throw std::runtime_error( "failed to create descriptor set layout!" );
     }
 }
 
-DescriptorSetLayout::~DescriptorSetLayout()
-{
-    vkDestroyDescriptorSetLayout( App::get().getLogicalDevice().getDeviceRef(), descriptorSetLayout, nullptr );
-}
+DescriptorSetLayout::~DescriptorSetLayout() { vkDestroyDescriptorSetLayout( device, descriptorSetLayout, nullptr ); }

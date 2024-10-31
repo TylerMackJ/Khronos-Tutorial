@@ -5,10 +5,12 @@
 
 #include <vector>
 
+#include "device/Device.hpp"
+
 class SyncObjects
 {
 public:
-    SyncObjects();
+    SyncObjects( Device& device );
     ~SyncObjects();
 
     std::vector< VkSemaphore >& getImageAvailableSemaphores() { return imageAvailableSemaphores; }
@@ -16,6 +18,7 @@ public:
     std::vector< VkFence >& getInFlightFences() { return inFlightFences; }
 
 private:
+    Device& device;
     std::vector< VkSemaphore > imageAvailableSemaphores;
     std::vector< VkSemaphore > renderFinishedSemaphores;
     std::vector< VkFence > inFlightFences;

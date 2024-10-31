@@ -3,15 +3,28 @@
 #define GLFW_INCLUDE_VULKAN
 #include <GLFW/glfw3.h>
 
+#include <optional>
+
+#include "PhysicalDevice.hpp"
+
 class LogicalDevice
 {
+    friend class Device;
+
 public:
-    LogicalDevice();
+    LogicalDevice(
+        PhysicalDevice& physicalDevice,
+        const std::vector< const char* > extensions,
+        std::optional< const std::vector< const char* > > validationLayers = std::nullopt
+    );
     ~LogicalDevice();
 
-    VkDevice& getDeviceRef() { return device; };
-    VkQueue& getGraphicsQueueRef() { return graphicsQueue; }
-    VkQueue& getPresentQueueRef() { return presentQueue; };
+private:
+    VkDevice& operator*() { return device; };
+    operator VkDevice&() { return device; };
+
+    VkQueue& getGraphicsQueue() { return graphicsQueue; }
+    VkQueue& getPresentQueue() { return presentQueue; };
 
 private:
     VkDevice device;

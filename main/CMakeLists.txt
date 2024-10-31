@@ -45,6 +45,7 @@ configure_file(models/viking_room.obj "${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_BUILD
 
 add_executable(${PROJECT_NAME} 
     src/HelloTriangleApplication.cpp
+    src/device/Device.cpp
     src/device/LogicalDevice.cpp
     src/device/PhysicalDevice.cpp
     src/drawing/CommandBuffer.cpp
@@ -70,8 +71,10 @@ add_executable(${PROJECT_NAME}
 )
 target_precompile_headers(${PROJECT_NAME} PRIVATE
     src/HelloTriangleApplication.hpp
+    src/device/Device.hpp
     src/device/LogicalDevice.hpp
     src/device/PhysicalDevice.hpp
+    src/device/QueueFamilyIndices.hpp
     src/drawing/CommandBuffer.hpp
     src/drawing/CommandPool.hpp
     src/drawing/Framebuffers.hpp

@@ -66,17 +66,14 @@ PhysicalDevice::PhysicalDevice() : physicalDevice( VK_NULL_HANDLE ), msaaSamples
     }
 }
 
-PhysicalDevice::QueueFamilyIndices PhysicalDevice::getQueueFamilyIndices()
-{
-    return findQueueFamilies( physicalDevice );
-}
+const QueueFamilyIndices PhysicalDevice::getQueueFamilyIndices() { return findQueueFamilies( physicalDevice ); }
 
-PhysicalDevice::SwapChainSupportDetails PhysicalDevice::getSwapChainSupportDetails()
+const SwapChainSupportDetails PhysicalDevice::getSwapChainSupportDetails()
 {
     return querySwapChainSupport( physicalDevice );
 }
 
-VkFormat PhysicalDevice::findSupportedFormat(
+const VkFormat PhysicalDevice::findSupportedFormat(
     const std::vector< VkFormat >& candidates, VkImageTiling tiling, VkFormatFeatureFlags features
 )
 {
@@ -131,7 +128,7 @@ int PhysicalDevice::rateDeviceSuitability( VkPhysicalDevice device )
     return score;
 }
 
-PhysicalDevice::QueueFamilyIndices PhysicalDevice::findQueueFamilies( VkPhysicalDevice device )
+QueueFamilyIndices PhysicalDevice::findQueueFamilies( VkPhysicalDevice device )
 {
     QueueFamilyIndices indices;
 
@@ -184,7 +181,7 @@ bool PhysicalDevice::checkDeviceExtensionSupport( VkPhysicalDevice device )
     return requiredExtensions.empty();
 }
 
-PhysicalDevice::SwapChainSupportDetails PhysicalDevice::querySwapChainSupport( VkPhysicalDevice device )
+SwapChainSupportDetails PhysicalDevice::querySwapChainSupport( VkPhysicalDevice device )
 {
     SwapChainSupportDetails details;
 

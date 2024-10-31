@@ -6,11 +6,12 @@
 #include <memory>
 
 #include "BufferMemoryMap.hpp"
+#include "device/Device.hpp"
 
 class Buffer
 {
 public:
-    Buffer( VkDeviceSize size, VkBufferUsageFlags usage, VkMemoryPropertyFlags properties );
+    Buffer( Device& device, VkDeviceSize size, VkBufferUsageFlags usage, VkMemoryPropertyFlags properties );
     ~Buffer();
 
     const VkBuffer& getBuffer() const { return buffer; }
@@ -20,10 +21,11 @@ public:
     void copyTo( const void* data );
     void unmapMemory();
 
-    static void copyBuffer( Buffer& srcBuffer, Buffer& dstBuffer, VkDeviceSize size );
-    static uint32_t findMemoryType( uint32_t typeFilter, VkMemoryPropertyFlags properties );
+    static void copyBuffer( Device& device, Buffer& srcBuffer, Buffer& dstBuffer, VkDeviceSize size );
+    static uint32_t findMemoryType( Device& device, uint32_t typeFilter, VkMemoryPropertyFlags properties );
 
 private:
+    Device& device;
     VkBuffer buffer;
     VkDeviceMemory bufferMemory;
     std::unique_ptr< BufferMemoryMap > bufferMemoryMap;

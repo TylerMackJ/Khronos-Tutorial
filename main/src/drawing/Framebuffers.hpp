@@ -5,14 +5,17 @@
 
 #include <vector>
 
+#include "device/Device.hpp"
+
 class Framebuffers
 {
 public:
-    Framebuffers();
+    Framebuffers( Device& device );
     ~Framebuffers();
 
     std::vector< VkFramebuffer >& getFramebuffers() { return swapChainFramebuffers; }
 
 private:
+    Device& device;
     std::vector< VkFramebuffer > swapChainFramebuffers;
 };

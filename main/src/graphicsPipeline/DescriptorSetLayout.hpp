@@ -6,14 +6,17 @@
 #define GLM_FORCE_DEPTH_ZERO_TO_ONE
 #include <glm/glm.hpp>
 
+#include "device/Device.hpp"
+
 class DescriptorSetLayout
 {
 public:
-    DescriptorSetLayout();
+    DescriptorSetLayout( Device& device );
     ~DescriptorSetLayout();
 
     const VkDescriptorSetLayout& getDescriptorSetLayout() const { return descriptorSetLayout; }
 
 private:
+    Device& device;
     VkDescriptorSetLayout descriptorSetLayout;
 };

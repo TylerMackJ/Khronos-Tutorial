@@ -6,11 +6,12 @@
 class RenderPass
 {
 public:
-    RenderPass();
+    RenderPass( Device& device );
     ~RenderPass();
 
     VkRenderPass& getRenderPass() { return renderPass; }
 
 private:
+    Device& device;
     VkRenderPass renderPass;
 };

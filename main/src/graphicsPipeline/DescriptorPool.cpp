@@ -6,7 +6,7 @@
 
 using App = HelloTriangleApplication;
 
-DescriptorPool::DescriptorPool()
+DescriptorPool::DescriptorPool( Device& device ) : device( device )
 {
     std::array< VkDescriptorPoolSize, 2 > poolSizes{};
     poolSizes[0].type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
@@ -20,14 +20,10 @@ DescriptorPool::DescriptorPool()
     poolInfo.pPoolSizes = poolSizes.data();
     poolInfo.maxSets = static_cast< uint32_t >( App::get().MAX_FRAMES_IN_FLIGHT );
 
-    if( vkCreateDescriptorPool( App::get().getLogicalDevice().getDeviceRef(), &poolInfo, nullptr, &descriptorPool ) !=
-        VK_SUCCESS )
+    if( vkCreateDescriptorPool( device, &poolInfo, nullptr, &descriptorPool ) != VK_SUCCESS )
     {
         throw std::runtime_error( "failed to create descriptor pool!" );
     }
 }
 
-DescriptorPool::~DescriptorPool()
-{
-    vkDestroyDescriptorPool( App::get().getLogicalDevice().getDeviceRef(), descriptorPool, nullptr );
-}
+DescriptorPool::~DescriptorPool() { vkDestroyDescriptorPool( device, descriptorPool, nullptr ); }

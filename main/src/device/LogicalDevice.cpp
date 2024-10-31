@@ -1,14 +1,16 @@
 #include "LogicalDevice.hpp"
 
+#include "PhysicalDevice.hpp"
+
 #include <set>
 
-#include "HelloTriangleApplication.hpp"
-
-using App = HelloTriangleApplication;
-
-LogicalDevice::LogicalDevice()
+LogicalDevice::LogicalDevice(
+    PhysicalDevice& physicalDevice,
+    const std::vector< const char* > extensions,
+    std::optional< const std::vector< const char* > > validationLayers
+)
 {
-    PhysicalDevice::QueueFamilyIndices indices = App::get().getPhysicalDevice().getQueueFamilyIndices();
+    QueueFamilyIndices indices = physicalDevice.getQueueFamilyIndices();
 
     std::vector< VkDeviceQueueCreateInfo > queueCreateInfos;
     std::set< uint32_t > uniqueQueueFamilies = { indices.graphicsFamily.value(), indices.presentFamily.value() };
@@ -33,19 +35,19 @@ LogicalDevice::LogicalDevice()
     createInfo.pQueueCreateInfos = queueCreateInfos.data();
     createInfo.queueCreateInfoCount = static_cast< uint32_t >( queueCreateInfos.size() );
     createInfo.pEnabledFeatures = &deviceFeatures;
-    createInfo.enabledExtensionCount = static_cast< uint32_t >( App::get().deviceExtensions.size() );
-    createInfo.ppEnabledExtensionNames = App::get().deviceExtensions.data();
-    if( App::get().enableValidationLayers )
+    createInfo.enabledExtensionCount = static_cast< uint32_t >( extensions.size() );
+    createInfo.ppEnabledExtensionNames = extensions.data();
+    if( validationLayers )
     {
-        createInfo.enabledLayerCount = static_cast< uint32_t >( App::get().validationLayers.size() );
-        createInfo.ppEnabledLayerNames = App::get().validationLayers.data();
+        createInfo.enabledLayerCount = static_cast< uint32_t >( validationLayers->size() );
+        createInfo.ppEnabledLayerNames = validationLayers->data();
     }
     else
     {
         createInfo.enabledLayerCount = 0;
     }
 
-    if( vkCreateDevice( App::get().getPhysicalDevice().getPhysicalDeviceRef(), &createInfo, nullptr, &device ) )
+    if( vkCreateDevice( physicalDevice, &createInfo, nullptr, &device ) )
     {
         throw std::runtime_error( "failed to create logical device!" );
     }

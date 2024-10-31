@@ -3,14 +3,17 @@
 #define GLFW_INCLUDE_VULKAN
 #include <GLFW/glfw3.h>
 
+#include "device/Device.hpp"
+
 class ImageView
 {
 public:
-    ImageView( VkImage image, VkFormat format, VkImageAspectFlags aspectFlags, uint32_t mipLevels );
+    ImageView( Device& device, VkImage image, VkFormat format, VkImageAspectFlags aspectFlags, uint32_t mipLevels );
     ~ImageView();
 
     const VkImageView& const getImageView() { return imageView; }
 
 private:
+    Device& device;
     VkImageView imageView;
 };

@@ -6,8 +6,7 @@
 #include <ModelLoader/Model.hpp>
 #include <ModelLoader/Vertex.hpp>
 
-#include "device/LogicalDevice.hpp"
-#include "device/PhysicalDevice.hpp"
+#include "device/Device.hpp"
 #include "drawing/CommandBuffer.hpp"
 #include "drawing/CommandPool.hpp"
 #include "drawing/Framebuffers.hpp"
@@ -68,9 +67,8 @@ private:
     std::unique_ptr< Image > depthImage;
     std::unique_ptr< Image > textureImage;
     std::unique_ptr< Instance > instance;
-    std::unique_ptr< LogicalDevice > logicalDevice;
     std::unique_ptr< ModelLoader::Model > vikingRoomModel;
-    std::unique_ptr< PhysicalDevice > physicalDevice;
+    std::unique_ptr< Device > device;
     std::unique_ptr< RenderPass > renderPass;
     std::unique_ptr< Surface > surface;
     std::unique_ptr< SwapChain > swapChain;
@@ -95,9 +93,7 @@ public:
     Image& getColorImage() { return *colorImage; }
     Image& getDepthImage() { return *depthImage; }
     Instance& getInstance() { return *instance; }
-    LogicalDevice& getLogicalDevice() { return *logicalDevice; }
     ModelLoader::Model& getVikingRoomModel() { return *vikingRoomModel; }
-    PhysicalDevice& getPhysicalDevice() { return *physicalDevice; }
     RenderPass& getRenderPass() { return *renderPass; }
     Surface& getSurface() { return *surface; }
     SwapChain& getSwapChain() { return *swapChain; }

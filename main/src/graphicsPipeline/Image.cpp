@@ -12,6 +12,7 @@
 using App = HelloTriangleApplication;
 
 Image::Image(
+    Device& device,
     uint32_t width,
     uint32_t height,
     uint32_t mipLevels,
@@ -21,13 +22,14 @@ Image::Image(
     VkImageUsageFlags usage,
     VkMemoryPropertyFlags properties
 )
-    : width( width ), height( height ), mipLevels( mipLevels ), numSamples( numSamples ), format( format ),
-      tiling( tiling ), usage( usage ), properties( properties )
+    : device( device ), width( width ), height( height ), mipLevels( mipLevels ), numSamples( numSamples ),
+      format( format ), tiling( tiling ), usage( usage ), properties( properties )
 {
     createImage();
 }
 
 Image::Image(
+    Device& device,
     const char* filename,
     VkSampleCountFlagBits numSamples,
     VkFormat format,
@@ -35,8 +37,8 @@ Image::Image(
     VkImageUsageFlags usage,
     VkMemoryPropertyFlags properties
 )
-    : width( 0 ), height( 0 ), mipLevels( 0 ), numSamples( numSamples ), format( format ), tiling( tiling ),
-      usage( usage ), properties( properties )
+    : device( device ), width( 0 ), height( 0 ), mipLevels( 0 ), numSamples( numSamples ), format( format ),
+      tiling( tiling ), usage( usage ), properties( properties )
 {
     int texWidth, texHeight, texChannels;
     stbi_uc* pixels = stbi_load( filename, &texWidth, &texHeight, &texChannels, STBI_rgb_alpha );
@@ -52,6 +54,7 @@ Image::Image(
     }
 
     std::unique_ptr< Buffer > stagingBuffer = std::make_unique< Buffer >(
+        device,
         imageSize,
         VK_BUFFER_USAGE_TRANSFER_SRC_BIT,
         VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT
@@ -87,37 +90,36 @@ void Image::createImage()
     imageInfo.samples = numSamples;
     imageInfo.flags = 0;
 
-    if( vkCreateImage( App::get().getLogicalDevice().getDeviceRef(), &imageInfo, nullptr, &image ) != VK_SUCCESS )
+    if( vkCreateImage( device, &imageInfo, nullptr, &image ) != VK_SUCCESS )
     {
         throw std::runtime_error( "failed to create texture image!" );
     }
 
     VkMemoryRequirements memRequirements;
-    vkGetImageMemoryRequirements( App::get().getLogicalDevice().getDeviceRef(), image, &memRequirements );
+    vkGetImageMemoryRequirements( device, image, &memRequirements );
 
     VkMemoryAllocateInfo allocInfo{};
     allocInfo.sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
     allocInfo.allocationSize = memRequirements.size;
-    allocInfo.memoryTypeIndex = Buffer::findMemoryType( memRequirements.memoryTypeBits, properties );
+    allocInfo.memoryTypeIndex = Buffer::findMemoryType( device, memRequirements.memoryTypeBits, properties );
 
-    if( vkAllocateMemory( App::get().getLogicalDevice().getDeviceRef(), &allocInfo, nullptr, &imageMemory ) !=
-        VK_SUCCESS )
+    if( vkAllocateMemory( device, &allocInfo, nullptr, &imageMemory ) != VK_SUCCESS )
     {
         throw std::runtime_error( "failed to allocate texture image memory!" );
     }
 
-    vkBindImageMemory( App::get().getLogicalDevice().getDeviceRef(), image, imageMemory, 0 );
+    vkBindImageMemory( device, image, imageMemory, 0 );
 }
 
 Image::~Image()
 {
-    vkDestroyImage( App::get().getLogicalDevice().getDeviceRef(), image, nullptr );
-    vkFreeMemory( App::get().getLogicalDevice().getDeviceRef(), imageMemory, nullptr );
+    vkDestroyImage( device, image, nullptr );
+    vkFreeMemory( device, imageMemory, nullptr );
 }
 
 void Image::transitionLayout( VkImageLayout oldLayout, VkImageLayout newLayout )
 {
-    VkCommandBuffer commandBuffer = CommandBuffer::beginSingleTimeCommands();
+    VkCommandBuffer commandBuffer = CommandBuffer::beginSingleTimeCommands( device );
 
     VkImageMemoryBarrier barrier{};
     barrier.sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER;
@@ -182,12 +184,12 @@ void Image::transitionLayout( VkImageLayout oldLayout, VkImageLayout newLayout )
 
     vkCmdPipelineBarrier( commandBuffer, sourceStage, destinationStage, 0, 0, nullptr, 0, nullptr, 1, &barrier );
 
-    CommandBuffer::endSingleTimeCommands( commandBuffer );
+    CommandBuffer::endSingleTimeCommands( device, commandBuffer );
 }
 
 void Image::copyBufferToImage( Buffer& buffer )
 {
-    VkCommandBuffer commandBuffer = CommandBuffer::beginSingleTimeCommands();
+    VkCommandBuffer commandBuffer = CommandBuffer::beginSingleTimeCommands( device );
 
     VkBufferImageCopy region{};
     region.bufferOffset = 0;
@@ -204,24 +206,24 @@ void Image::copyBufferToImage( Buffer& buffer )
         commandBuffer, buffer.getBuffer(), image, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, 1, &region
     );
 
-    CommandBuffer::endSingleTimeCommands( commandBuffer );
+    CommandBuffer::endSingleTimeCommands( device, commandBuffer );
 }
 
 void Image::createImageView( VkImageAspectFlags aspectFlags )
 {
-    imageView = std::make_unique< ImageView >( image, format, aspectFlags, mipLevels );
+    imageView = std::make_unique< ImageView >( device, image, format, aspectFlags, mipLevels );
 }
 
 void Image::generateMipmaps()
 {
     VkFormatProperties properties;
-    vkGetPhysicalDeviceFormatProperties( App::get().getPhysicalDevice().getPhysicalDeviceRef(), format, &properties );
+    vkGetPhysicalDeviceFormatProperties( device, format, &properties );
 
     if( !( properties.optimalTilingFeatures & VK_FORMAT_FEATURE_SAMPLED_IMAGE_FILTER_LINEAR_BIT ) )
     {
         throw std::runtime_error( "texture image format does not support linear blitting!" );
     }
-    VkCommandBuffer commandBuffer = CommandBuffer::beginSingleTimeCommands();
+    VkCommandBuffer commandBuffer = CommandBuffer::beginSingleTimeCommands( device );
 
     VkImageMemoryBarrier barrier{};
     barrier.sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER;
@@ -325,7 +327,7 @@ void Image::generateMipmaps()
         &barrier
     );
 
-    CommandBuffer::endSingleTimeCommands( commandBuffer );
+    CommandBuffer::endSingleTimeCommands( device, commandBuffer );
 }
 
 bool Image::hasStencilComponent( VkFormat format )

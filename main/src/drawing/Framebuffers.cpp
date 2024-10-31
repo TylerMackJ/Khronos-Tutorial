@@ -6,7 +6,7 @@
 
 using App = HelloTriangleApplication;
 
-Framebuffers::Framebuffers()
+Framebuffers::Framebuffers( Device& device ) : device( device )
 {
     int* i;
 
@@ -29,9 +29,7 @@ Framebuffers::Framebuffers()
         framebufferInfo.height = App::get().getSwapChain().getSwapChainExtent().height;
         framebufferInfo.layers = 1;
 
-        if( vkCreateFramebuffer(
-                App::get().getLogicalDevice().getDeviceRef(), &framebufferInfo, nullptr, &swapChainFramebuffers[i]
-            ) != VK_SUCCESS )
+        if( vkCreateFramebuffer( device, &framebufferInfo, nullptr, &swapChainFramebuffers[i] ) != VK_SUCCESS )
         {
             throw std::runtime_error( "failed to create framebuffer!" );
         }
@@ -42,6 +40,6 @@ Framebuffers::~Framebuffers()
 {
     for( auto framebuffer : swapChainFramebuffers )
     {
-        vkDestroyFramebuffer( App::get().getLogicalDevice().getDeviceRef(), framebuffer, nullptr );
+        vkDestroyFramebuffer( device, framebuffer, nullptr );
     }
 }

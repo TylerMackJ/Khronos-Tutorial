@@ -6,7 +6,7 @@
 
 using App = HelloTriangleApplication;
 
-CommandBuffer::CommandBuffer()
+CommandBuffer::CommandBuffer( Device& device ) : device( device )
 {
     commandBuffers.resize( App::get().MAX_FRAMES_IN_FLIGHT );
 
@@ -16,8 +16,7 @@ CommandBuffer::CommandBuffer()
     allocInfo.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
     allocInfo.commandBufferCount = ( uint32_t )commandBuffers.size();
 
-    if( vkAllocateCommandBuffers( App::get().getLogicalDevice().getDeviceRef(), &allocInfo, commandBuffers.data() ) !=
-        VK_SUCCESS )
+    if( vkAllocateCommandBuffers( device, &allocInfo, commandBuffers.data() ) != VK_SUCCESS )
     {
         throw std::runtime_error( "failed to allocate command buffers!" );
     }
@@ -96,7 +95,7 @@ void CommandBuffer::recordCommandBuffer( VkCommandBuffer commandBuffer, uint32_t
     }
 }
 
-VkCommandBuffer CommandBuffer::beginSingleTimeCommands()
+VkCommandBuffer CommandBuffer::beginSingleTimeCommands( Device& device )
 {
     VkCommandBufferAllocateInfo allocInfo{};
     allocInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
@@ -105,7 +104,7 @@ VkCommandBuffer CommandBuffer::beginSingleTimeCommands()
     allocInfo.commandBufferCount = 1;
 
     VkCommandBuffer commandBuffer;
-    vkAllocateCommandBuffers( App::get().getLogicalDevice().getDeviceRef(), &allocInfo, &commandBuffer );
+    vkAllocateCommandBuffers( device, &allocInfo, &commandBuffer );
 
     VkCommandBufferBeginInfo beginInfo{};
     beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
@@ -115,7 +114,7 @@ VkCommandBuffer CommandBuffer::beginSingleTimeCommands()
 
     return commandBuffer;
 }
-void CommandBuffer::endSingleTimeCommands( VkCommandBuffer commandBuffer )
+void CommandBuffer::endSingleTimeCommands( Device& device, VkCommandBuffer commandBuffer )
 {
     vkEndCommandBuffer( commandBuffer );
 
@@ -124,10 +123,8 @@ void CommandBuffer::endSingleTimeCommands( VkCommandBuffer commandBuffer )
     submitInfo.commandBufferCount = 1;
     submitInfo.pCommandBuffers = &commandBuffer;
 
-    vkQueueSubmit( App::get().getLogicalDevice().getGraphicsQueueRef(), 1, &submitInfo, VK_NULL_HANDLE );
-    vkQueueWaitIdle( App::get().getLogicalDevice().getGraphicsQueueRef() );
+    vkQueueSubmit( device.getGraphicsQueue(), 1, &submitInfo, VK_NULL_HANDLE );
+    vkQueueWaitIdle( device.getGraphicsQueue() );
 
-    vkFreeCommandBuffers(
-        App::get().getLogicalDevice().getDeviceRef(), App::get().getCommandPool().getCommandPool(), 1, &commandBuffer
-    );
+    vkFreeCommandBuffers( device, App::get().getCommandPool().getCommandPool(), 1, &commandBuffer );
 }

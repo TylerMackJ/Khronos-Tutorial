@@ -6,40 +6,35 @@
 #include <optional>
 #include <stdexcept>
 
+#include "QueueFamilyIndices.hpp"
+#include "SwapChainSupportDetails.hpp"
 #include "presentation/Surface.hpp"
 #include "setup/Instance.hpp"
 
 class PhysicalDevice
 {
+    friend class Device;
+    friend class LogicalDevice;
+
 public:
-    struct QueueFamilyIndices
-    {
-        std::optional< uint32_t > graphicsFamily;
-        std::optional< uint32_t > presentFamily;
-
-        bool isComplete() { return graphicsFamily.has_value() && presentFamily.has_value(); }
-    };
-    struct SwapChainSupportDetails
-    {
-        VkSurfaceCapabilitiesKHR capabilities;
-        std::vector< VkSurfaceFormatKHR > formats;
-        std::vector< VkPresentModeKHR > presentModes;
-    };
-
     PhysicalDevice();
+    ~PhysicalDevice() = default;
 
-    const VkPhysicalDevice& const getPhysicalDeviceRef() { return physicalDevice; }
-    QueueFamilyIndices getQueueFamilyIndices();
-    SwapChainSupportDetails getSwapChainSupportDetails();
+private:
+    VkPhysicalDevice& operator*() { return physicalDevice; }
+    operator VkPhysicalDevice&() { return physicalDevice; }
+
+    const QueueFamilyIndices getQueueFamilyIndices();
+    const SwapChainSupportDetails getSwapChainSupportDetails();
     const VkPhysicalDeviceProperties& const getProperties() { return properties; }
-    VkFormat findSupportedFormat(
+    const VkFormat findSupportedFormat(
         const std::vector< VkFormat >& candidates, VkImageTiling tiling, VkFormatFeatureFlags features
     );
     const VkSampleCountFlagBits& const getMSAASamples() { return msaaSamples; }
 
 private:
     int rateDeviceSuitability( VkPhysicalDevice device );
-    QueueFamilyIndices findQueueFamilies( VkPhysicalDevice device );
+    static QueueFamilyIndices findQueueFamilies( VkPhysicalDevice device );
     bool checkDeviceExtensionSupport( VkPhysicalDevice device );
     SwapChainSupportDetails querySwapChainSupport( VkPhysicalDevice device );
 

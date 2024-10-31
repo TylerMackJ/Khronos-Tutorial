@@ -1,12 +1,9 @@
 #include "Buffer.hpp"
 
-#include "HelloTriangleApplication.hpp"
-
 #include "drawing/CommandBuffer.hpp"
 
-using App = HelloTriangleApplication;
-
-Buffer::Buffer( VkDeviceSize size, VkBufferUsageFlags usage, VkMemoryPropertyFlags properties )
+Buffer::Buffer( Device& device, VkDeviceSize size, VkBufferUsageFlags usage, VkMemoryPropertyFlags properties )
+    : device( device )
 {
     VkBufferCreateInfo bufferInfo{};
     bufferInfo.sType = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO;
@@ -14,37 +11,36 @@ Buffer::Buffer( VkDeviceSize size, VkBufferUsageFlags usage, VkMemoryPropertyFla
     bufferInfo.usage = usage;
     bufferInfo.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
 
-    if( vkCreateBuffer( App::get().getLogicalDevice().getDeviceRef(), &bufferInfo, nullptr, &buffer ) != VK_SUCCESS )
+    if( vkCreateBuffer( device, &bufferInfo, nullptr, &buffer ) != VK_SUCCESS )
     {
         throw std::runtime_error( "failed to create buffer!" );
     }
 
     VkMemoryRequirements memRequirements;
-    vkGetBufferMemoryRequirements( App::get().getLogicalDevice().getDeviceRef(), buffer, &memRequirements );
+    vkGetBufferMemoryRequirements( device, buffer, &memRequirements );
 
     VkMemoryAllocateInfo allocInfo{};
     allocInfo.sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
     allocInfo.allocationSize = memRequirements.size;
-    allocInfo.memoryTypeIndex = findMemoryType( memRequirements.memoryTypeBits, properties );
+    allocInfo.memoryTypeIndex = findMemoryType( device, memRequirements.memoryTypeBits, properties );
 
-    if( vkAllocateMemory( App::get().getLogicalDevice().getDeviceRef(), &allocInfo, nullptr, &bufferMemory ) !=
-        VK_SUCCESS )
+    if( vkAllocateMemory( device, &allocInfo, nullptr, &bufferMemory ) != VK_SUCCESS )
     {
         throw std::runtime_error( "failed to allocate vertex buffer memory!" );
     }
 
-    vkBindBufferMemory( App::get().getLogicalDevice().getDeviceRef(), buffer, bufferMemory, 0 );
+    vkBindBufferMemory( device, buffer, bufferMemory, 0 );
 }
 
 Buffer::~Buffer()
 {
-    vkDestroyBuffer( App::get().getLogicalDevice().getDeviceRef(), buffer, nullptr );
-    vkFreeMemory( App::get().getLogicalDevice().getDeviceRef(), bufferMemory, nullptr );
+    vkDestroyBuffer( device, buffer, nullptr );
+    vkFreeMemory( device, bufferMemory, nullptr );
 }
 
 void Buffer::mapMemory( VkDeviceSize offset, VkDeviceSize size, VkMemoryMapFlags flags )
 {
-    bufferMemoryMap = std::make_unique< BufferMemoryMap >( bufferMemory, offset, size, flags );
+    bufferMemoryMap = std::make_unique< BufferMemoryMap >( device, bufferMemory, offset, size, flags );
 }
 
 void Buffer::copyTo( const void* data )
@@ -58,10 +54,10 @@ void Buffer::copyTo( const void* data )
 
 void Buffer::unmapMemory() { bufferMemoryMap.reset(); }
 
-uint32_t Buffer::findMemoryType( uint32_t typeFilter, VkMemoryPropertyFlags properties )
+uint32_t Buffer::findMemoryType( Device& device, uint32_t typeFilter, VkMemoryPropertyFlags properties )
 {
     VkPhysicalDeviceMemoryProperties memProperties;
-    vkGetPhysicalDeviceMemoryProperties( App::get().getPhysicalDevice().getPhysicalDeviceRef(), &memProperties );
+    vkGetPhysicalDeviceMemoryProperties( device, &memProperties );
     for( uint32_t i = 0; i < memProperties.memoryTypeCount; i++ )
     {
         if( ( typeFilter & ( 1 << i ) ) && ( memProperties.memoryTypes[i].propertyFlags & properties ) == properties )
@@ -73,9 +69,9 @@ uint32_t Buffer::findMemoryType( uint32_t typeFilter, VkMemoryPropertyFlags prop
     throw std::runtime_error( "failed to find suitable memory type!" );
 }
 
-void Buffer::copyBuffer( Buffer& srcBuffer, Buffer& dstBuffer, VkDeviceSize size )
+void Buffer::copyBuffer( Device& device, Buffer& srcBuffer, Buffer& dstBuffer, VkDeviceSize size )
 {
-    VkCommandBuffer commandBuffer = CommandBuffer::beginSingleTimeCommands();
+    VkCommandBuffer commandBuffer = CommandBuffer::beginSingleTimeCommands( device );
 
     VkBufferCopy copyRegion{};
     copyRegion.srcOffset = 0;
@@ -83,5 +79,5 @@ void Buffer::copyBuffer( Buffer& srcBuffer, Buffer& dstBuffer, VkDeviceSize size
     copyRegion.size = size;
     vkCmdCopyBuffer( commandBuffer, srcBuffer.getBuffer(), dstBuffer.getBuffer(), 1, &copyRegion );
 
-    CommandBuffer::endSingleTimeCommands( commandBuffer );
+    CommandBuffer::endSingleTimeCommands( device, commandBuffer );
 }

@@ -5,15 +5,16 @@
 #include <algorithm>
 
 #include "device/PhysicalDevice.hpp"
+#include "device/QueueFamilyIndices.hpp"
+#include "device/SwapChainSupportDetails.hpp"
 
 using App = HelloTriangleApplication;
 
-SwapChain::SwapChain()
-    : swapChain( VK_NULL_HANDLE ), swapChainImages(), swapChainImageFormat( VK_FORMAT_UNDEFINED ),
+SwapChain::SwapChain( Device& device )
+    : device( device ), swapChain( VK_NULL_HANDLE ), swapChainImages(), swapChainImageFormat( VK_FORMAT_UNDEFINED ),
       swapChainExtent( { 0, 0 } )
 {
-    PhysicalDevice::SwapChainSupportDetails swapChainSupport =
-        App::get().getPhysicalDevice().getSwapChainSupportDetails();
+    SwapChainSupportDetails swapChainSupport = device.getSwapChainSupportDetails();
 
     VkSurfaceFormatKHR surfaceFormat = chooseSwapSurfaceFormat( swapChainSupport.formats );
     VkPresentModeKHR presentMode = chooseSwapPresentMode( swapChainSupport.presentModes );
@@ -35,7 +36,7 @@ SwapChain::SwapChain()
     createInfo.imageArrayLayers = 1;
     createInfo.imageUsage = VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT;
 
-    PhysicalDevice::QueueFamilyIndices indices = App::get().getPhysicalDevice().getQueueFamilyIndices();
+    QueueFamilyIndices indices = device.getQueueFamilyIndices();
     uint32_t queueFamilyIndices[] = { indices.graphicsFamily.value(), indices.presentFamily.value() };
 
     if( indices.graphicsFamily != indices.presentFamily )
@@ -55,23 +56,20 @@ SwapChain::SwapChain()
     createInfo.clipped = VK_TRUE;
     createInfo.oldSwapchain = VK_NULL_HANDLE;
 
-    if( vkCreateSwapchainKHR( App::get().getLogicalDevice().getDeviceRef(), &createInfo, nullptr, &swapChain ) !=
-        VK_SUCCESS )
+    if( vkCreateSwapchainKHR( device, &createInfo, nullptr, &swapChain ) != VK_SUCCESS )
     {
         throw std::runtime_error( "failed to create swap chain!" );
     }
 
-    vkGetSwapchainImagesKHR( App::get().getLogicalDevice().getDeviceRef(), swapChain, &imageCount, nullptr );
+    vkGetSwapchainImagesKHR( device, swapChain, &imageCount, nullptr );
     swapChainImages.resize( imageCount );
-    vkGetSwapchainImagesKHR(
-        App::get().getLogicalDevice().getDeviceRef(), swapChain, &imageCount, swapChainImages.data()
-    );
+    vkGetSwapchainImagesKHR( device, swapChain, &imageCount, swapChainImages.data() );
 
     swapChainImageFormat = surfaceFormat.format;
     swapChainExtent = extent;
 }
 
-SwapChain::~SwapChain() { vkDestroySwapchainKHR( App::get().getLogicalDevice().getDeviceRef(), swapChain, nullptr ); }
+SwapChain::~SwapChain() { vkDestroySwapchainKHR( device, swapChain, nullptr ); }
 
 VkSurfaceFormatKHR SwapChain::chooseSwapSurfaceFormat( const std::vector< VkSurfaceFormatKHR >& availableFormats )
 {

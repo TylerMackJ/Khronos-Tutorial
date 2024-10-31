@@ -4,12 +4,14 @@
 #include <GLFW/glfw3.h>
 
 #include "Buffer.hpp"
+#include "device/Device.hpp"
 #include "presentation/ImageView.hpp"
 
 class Image
 {
 public:
     Image(
+        Device& device,
         uint32_t width,
         uint32_t height,
         uint32_t mipLevels,
@@ -20,6 +22,7 @@ public:
         VkMemoryPropertyFlags properties
     );
     Image(
+        Device& device,
         const char* filename,
         VkSampleCountFlagBits numSamples,
         VkFormat format,
@@ -43,6 +46,7 @@ private:
 
     static bool hasStencilComponent( VkFormat format );
 
+    Device& device;
     VkImage image;
     VkDeviceMemory imageMemory;
     uint32_t mipLevels;

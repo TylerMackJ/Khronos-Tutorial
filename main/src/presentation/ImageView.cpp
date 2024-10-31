@@ -1,10 +1,9 @@
 #include "ImageView.hpp"
 
-#include "HelloTriangleApplication.hpp"
-
-using App = HelloTriangleApplication;
-
-ImageView::ImageView( VkImage image, VkFormat format, VkImageAspectFlags aspectFlags, uint32_t mipLevels )
+ImageView::ImageView(
+    Device& device, VkImage image, VkFormat format, VkImageAspectFlags aspectFlags, uint32_t mipLevels
+)
+    : device( device )
 {
     VkImageViewCreateInfo createInfo{};
     createInfo.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
@@ -21,11 +20,10 @@ ImageView::ImageView( VkImage image, VkFormat format, VkImageAspectFlags aspectF
     createInfo.subresourceRange.baseArrayLayer = 0;
     createInfo.subresourceRange.layerCount = 1;
 
-    if( vkCreateImageView( App::get().getLogicalDevice().getDeviceRef(), &createInfo, nullptr, &imageView ) !=
-        VK_SUCCESS )
+    if( vkCreateImageView( device, &createInfo, nullptr, &imageView ) != VK_SUCCESS )
     {
         throw std::runtime_error( "failed to create image view!" );
     }
 }
 
-ImageView::~ImageView() { vkDestroyImageView( App::get().getLogicalDevice().getDeviceRef(), imageView, nullptr ); }
+ImageView::~ImageView() { vkDestroyImageView( device, imageView, nullptr ); }
