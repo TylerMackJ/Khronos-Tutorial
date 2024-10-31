@@ -28,9 +28,7 @@ private:
         VkDebugUtilsMessengerEXT* pDebugMessenger
     );
 
-    void DestroyDebugUtilsMessengerEXT(
-        VkInstance instance, VkDebugUtilsMessengerEXT debugMessenger, const VkAllocationCallbacks* pAllocator
-    );
+    void DestroyDebugUtilsMessengerEXT( VkInstance instance, const VkAllocationCallbacks* pAllocator );
 
     VkDebugUtilsMessengerEXT debugMessenger;
 };

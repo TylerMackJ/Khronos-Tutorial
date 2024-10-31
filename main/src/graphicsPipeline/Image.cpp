@@ -216,10 +216,10 @@ void Image::createImageView( VkImageAspectFlags aspectFlags )
 
 void Image::generateMipmaps()
 {
-    VkFormatProperties properties;
-    vkGetPhysicalDeviceFormatProperties( device, format, &properties );
+    VkFormatProperties formatProperties;
+    vkGetPhysicalDeviceFormatProperties( device, format, &formatProperties );
 
-    if( !( properties.optimalTilingFeatures & VK_FORMAT_FEATURE_SAMPLED_IMAGE_FILTER_LINEAR_BIT ) )
+    if( !( formatProperties.optimalTilingFeatures & VK_FORMAT_FEATURE_SAMPLED_IMAGE_FILTER_LINEAR_BIT ) )
     {
         throw std::runtime_error( "texture image format does not support linear blitting!" );
     }

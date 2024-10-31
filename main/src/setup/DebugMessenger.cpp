@@ -26,15 +26,15 @@ DebugMessenger::~DebugMessenger()
 {
     if( App::get().enableValidationLayers )
     {
-        DestroyDebugUtilsMessengerEXT( App::get().getInstance().getInstanceRef(), debugMessenger, nullptr );
+        DestroyDebugUtilsMessengerEXT( App::get().getInstance().getInstanceRef(), nullptr );
     }
 }
 
 VKAPI_ATTR VkBool32 VKAPI_CALL DebugMessenger::debugCallback(
-    VkDebugUtilsMessageSeverityFlagBitsEXT messageSeverity,
-    VkDebugUtilsMessageTypeFlagsEXT messageType,
+    VkDebugUtilsMessageSeverityFlagBitsEXT /*messageSeverity*/,
+    VkDebugUtilsMessageTypeFlagsEXT /*messageType*/,
     const VkDebugUtilsMessengerCallbackDataEXT* pCallbackData,
-    void* pUserData
+    void* /*pUserData*/
 )
 {
     std::cerr << "validation layer: " << pCallbackData->pMessage << std::endl;
@@ -74,9 +74,7 @@ VkResult DebugMessenger::CreateDebugUtilsMessengerEXT(
     }
 }
 
-void DebugMessenger::DestroyDebugUtilsMessengerEXT(
-    VkInstance instance, VkDebugUtilsMessengerEXT debugMessenger, const VkAllocationCallbacks* pAllocator
-)
+void DebugMessenger::DestroyDebugUtilsMessengerEXT( VkInstance instance, const VkAllocationCallbacks* pAllocator )
 {
     auto func =
         ( PFN_vkDestroyDebugUtilsMessengerEXT )vkGetInstanceProcAddr( instance, "vkDestroyDebugUtilsMessengerEXT" );

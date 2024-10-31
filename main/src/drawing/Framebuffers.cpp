@@ -8,8 +8,6 @@ using App = HelloTriangleApplication;
 
 Framebuffers::Framebuffers( Device& device ) : device( device )
 {
-    int* i;
-
     swapChainFramebuffers.resize( App::get().getSwapChain().getSwapChainImages().size() );
 
     for( size_t i = 0; i < App::get().getSwapChain().getSwapChainImages().size(); i++ )

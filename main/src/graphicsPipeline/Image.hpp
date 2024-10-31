@@ -57,6 +57,5 @@ private:
     VkImageTiling tiling;
     VkImageUsageFlags usage;
     VkMemoryPropertyFlags properties;
-    std::unique_ptr< Buffer > stagingBuffer;
     std::unique_ptr< ImageView > imageView;
 };

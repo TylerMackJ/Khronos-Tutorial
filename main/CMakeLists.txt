@@ -1,7 +1,6 @@
 cmake_minimum_required(VERSION 3.16)
 project(Khronos_Binary CXX)
 set(CMAKE_CXX_STANDARD 17)
-set(CMAKE_CXX_FLAGS_DEBUG_INIT "-Wall -O0 -g")
 
 find_package(Vulkan REQUIRED)
 
@@ -103,5 +102,11 @@ target_include_directories(${PROJECT_NAME} PRIVATE ${CMAKE_SOURCE_DIR}/external)
 target_link_libraries(${PROJECT_NAME} glfw)
 target_link_libraries(${PROJECT_NAME} Vulkan::Vulkan)
 target_link_libraries(${PROJECT_NAME} ModelLoader)
+
+if(MSVC)
+    target_compile_options(${PROJECT_NAME} PRIVATE /W4 /WX)
+else()
+    target_compile_options(${PROJECT_NAME} PRIVATE -Wall -Wextra -Wpedantic -Werror)
+endif()
 
 install(TARGETS ${PROJECT_NAME} DESTINATION bin)
