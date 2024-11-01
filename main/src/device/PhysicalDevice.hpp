@@ -8,8 +8,9 @@
 
 #include "QueueFamilyIndices.hpp"
 #include "SwapChainSupportDetails.hpp"
-#include "presentation/Surface.hpp"
-#include "setup/Instance.hpp"
+#include "window/Instance.hpp"
+#include "window/Surface.hpp"
+
 
 class PhysicalDevice
 {

@@ -20,12 +20,13 @@
 #include "graphicsPipeline/TextureSampler.hpp"
 #include "graphicsPipeline/UniformBufferObject.hpp"
 #include "presentation/ImageView.hpp"
-#include "presentation/Surface.hpp"
 #include "presentation/SwapChain.hpp"
-#include "setup/DebugMessenger.hpp"
-#include "setup/GLFWInit.hpp"
-#include "setup/Instance.hpp"
-#include "setup/Window.hpp"
+#include "window/DebugMessenger.hpp"
+#include "window/GLFWInit.hpp"
+#include "window/Instance.hpp"
+#include "window/Surface.hpp"
+#include "window/Window.hpp"
+
 
 class HelloTriangleApplication
 {

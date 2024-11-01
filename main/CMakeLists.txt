@@ -61,12 +61,12 @@ add_executable(${PROJECT_NAME}
     src/graphicsPipeline/TextureSampler.cpp
     src/main.cpp
     src/presentation/ImageView.cpp
-    src/presentation/Surface.cpp
     src/presentation/SwapChain.cpp
-    src/setup/DebugMessenger.cpp
-    src/setup/GLFWInit.cpp
-    src/setup/Instance.cpp
-    src/setup/Window.cpp
+    src/window/DebugMessenger.cpp
+    src/window/GLFWInit.cpp
+    src/window/Instance.cpp
+    src/window/Surface.cpp
+    src/window/Window.cpp
 )
 target_precompile_headers(${PROJECT_NAME} PRIVATE
     src/HelloTriangleApplication.hpp
@@ -88,11 +88,11 @@ target_precompile_headers(${PROJECT_NAME} PRIVATE
     src/graphicsPipeline/TextureSampler.hpp
     src/graphicsPipeline/UniformBufferObject.hpp
     src/presentation/ImageView.hpp
-    src/presentation/Surface.hpp
     src/presentation/SwapChain.hpp
-    src/setup/DebugMessenger.hpp
-    src/setup/Instance.hpp
-    src/setup/Window.hpp
+    src/window/DebugMessenger.hpp
+    src/window/Instance.hpp
+    src/window/Surface.hpp
+    src/window/Window.hpp
 )
 
 target_include_directories(${PROJECT_NAME} PUBLIC ${PROJECT_SOURCE_DIR}/src)
