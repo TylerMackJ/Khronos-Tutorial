@@ -1,14 +1,10 @@
 #include "SwapChain.hpp"
 
-#include "HelloTriangleApplication.hpp"
-
 #include <algorithm>
 
 #include "device/PhysicalDevice.hpp"
 #include "device/QueueFamilyIndices.hpp"
 #include "device/SwapChainSupportDetails.hpp"
-
-using App = HelloTriangleApplication;
 
 SwapChain::SwapChain( Window& window, Device& device )
     : window( window ), device( device ), swapChain( VK_NULL_HANDLE ), swapChainImages(),

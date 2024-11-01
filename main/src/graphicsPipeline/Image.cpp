@@ -3,13 +3,10 @@
 #define STB_IMAGE_IMPLEMENTATION
 #include <stb/stb_image.h>
 
-#include "HelloTriangleApplication.hpp"
-
+#include <cmath>
 #include <stdexcept>
 
 #include "drawing/CommandBuffer.hpp"
-
-using App = HelloTriangleApplication;
 
 Image::Image(
     Device& device,

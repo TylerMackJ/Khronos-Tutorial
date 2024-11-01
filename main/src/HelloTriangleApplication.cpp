@@ -70,7 +70,7 @@ void HelloTriangleApplication::constructor()
     createVertexBuffer();
     createIndexBuffer();
     createUniformBuffers();
-    descriptorPool = std::make_unique< DescriptorPool >( *device );
+    descriptorPool = std::make_unique< DescriptorPool >( *device, static_cast< uint32_t >( MAX_FRAMES_IN_FLIGHT ) );
     createDescriptorSets();
     commandBuffer = std::make_unique< CommandBuffer >( *device );
     syncObjects = std::make_unique< SyncObjects >( *device );

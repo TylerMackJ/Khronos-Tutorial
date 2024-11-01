@@ -8,7 +8,7 @@
 class DescriptorPool
 {
 public:
-    DescriptorPool( Device& device );
+    DescriptorPool( Device& device, uint32_t maxFramesInFlight );
     ~DescriptorPool();
 
     const VkDescriptorPool& getDescriptorPool() const { return descriptorPool; }

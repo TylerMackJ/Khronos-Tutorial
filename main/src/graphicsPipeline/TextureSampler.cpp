@@ -2,10 +2,6 @@
 
 #include <stdexcept>
 
-#include "HelloTriangleApplication.hpp"
-
-using App = HelloTriangleApplication;
-
 TextureSampler::TextureSampler( Device& device ) : device( device )
 {
     VkSamplerCreateInfo samplerInfo = {};
