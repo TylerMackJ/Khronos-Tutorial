@@ -21,12 +21,7 @@
 #include "graphicsPipeline/UniformBufferObject.hpp"
 #include "presentation/ImageView.hpp"
 #include "presentation/SwapChain.hpp"
-#include "window/DebugMessenger.hpp"
-#include "window/GLFWInit.hpp"
-#include "window/Instance.hpp"
-#include "window/Surface.hpp"
 #include "window/Window.hpp"
-
 
 class HelloTriangleApplication
 {
@@ -58,20 +53,16 @@ private:
     std::unique_ptr< Buffer > vertexBuffer;
     std::unique_ptr< CommandBuffer > commandBuffer;
     std::unique_ptr< CommandPool > commandPool;
-    std::unique_ptr< DebugMessenger > debugMessenger;
     std::unique_ptr< DescriptorPool > descriptorPool;
     std::unique_ptr< DescriptorSetLayout > descriptorSetLayout;
     std::unique_ptr< Framebuffers > framebuffers;
-    std::unique_ptr< GLFWInit > glfw;
     std::unique_ptr< GraphicsPipeline > graphicsPipeline;
     std::unique_ptr< Image > colorImage;
     std::unique_ptr< Image > depthImage;
     std::unique_ptr< Image > textureImage;
-    std::unique_ptr< Instance > instance;
     std::unique_ptr< ModelLoader::Model > vikingRoomModel;
     std::unique_ptr< Device > device;
     std::unique_ptr< RenderPass > renderPass;
-    std::unique_ptr< Surface > surface;
     std::unique_ptr< SwapChain > swapChain;
     std::unique_ptr< SyncObjects > syncObjects;
     std::unique_ptr< TextureSampler > textureSampler;
@@ -85,18 +76,14 @@ public:
     Buffer& getVertexBuffer() { return *vertexBuffer; }
     CommandBuffer& getCommandBuffer() { return *commandBuffer; }
     CommandPool& getCommandPool() { return *commandPool; }
-    DebugMessenger& getDebugMessenger() { return *debugMessenger; }
     DescriptorPool& getDescriptorPool() { return *descriptorPool; }
     DescriptorSetLayout& getDescriptorSetLayout() { return *descriptorSetLayout; }
     Framebuffers& getFramebuffers() { return *framebuffers; }
-    GLFWInit& getGLFWInit() { return *glfw; }
     GraphicsPipeline& getGraphicsPipeline() { return *graphicsPipeline; }
     Image& getColorImage() { return *colorImage; }
     Image& getDepthImage() { return *depthImage; }
-    Instance& getInstance() { return *instance; }
     ModelLoader::Model& getVikingRoomModel() { return *vikingRoomModel; }
     RenderPass& getRenderPass() { return *renderPass; }
-    Surface& getSurface() { return *surface; }
     SwapChain& getSwapChain() { return *swapChain; }
     SyncObjects& getSyncObjects() { return *syncObjects; }
     Window& getWindow() { return *window; }

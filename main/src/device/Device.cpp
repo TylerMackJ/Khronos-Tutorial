@@ -1,14 +1,13 @@
 #include "Device.hpp"
 
-Device::Device()
+Device::Device(
+    Window& window,
+    std::vector< const char* > deviceExtensions,
+    std::optional< const std::vector< const char* > > validationLayers
+)
 {
-    physicalDevice = std::make_unique< PhysicalDevice >();
-    logicalDevice = std::make_unique< LogicalDevice >(
-        *physicalDevice,
-        std::vector< const char* >( { VK_KHR_SWAPCHAIN_EXTENSION_NAME } )
-#ifndef NDEBUG
-            ,
-        std::optional< const std::vector< const char* > >( { "VK_LAYER_KHRONOS_validation" } )
-#endif
+    physicalDevice = std::make_unique< PhysicalDevice >(
+        window, std::set< std::string >( deviceExtensions.begin(), deviceExtensions.end() )
     );
+    logicalDevice = std::make_unique< LogicalDevice >( *physicalDevice, deviceExtensions, validationLayers );
 }

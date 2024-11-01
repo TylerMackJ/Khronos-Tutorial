@@ -6,7 +6,7 @@
 
 using App = HelloTriangleApplication;
 
-DebugMessenger::DebugMessenger() : debugMessenger( VK_NULL_HANDLE )
+DebugMessenger::DebugMessenger( Instance& instance ) : instance( instance ), debugMessenger( VK_NULL_HANDLE )
 {
     if( !App::get().enableValidationLayers )
         return;
@@ -14,9 +14,7 @@ DebugMessenger::DebugMessenger() : debugMessenger( VK_NULL_HANDLE )
     VkDebugUtilsMessengerCreateInfoEXT createInfo;
     populateDebugMessengerCreateInfo( createInfo );
 
-    if( CreateDebugUtilsMessengerEXT(
-            App::get().getInstance().getInstanceRef(), &createInfo, nullptr, &debugMessenger
-        ) != VK_SUCCESS )
+    if( CreateDebugUtilsMessengerEXT( &createInfo, nullptr, &debugMessenger ) != VK_SUCCESS )
     {
         throw std::runtime_error( "failed to set up debug messenger!" );
     }
@@ -26,7 +24,7 @@ DebugMessenger::~DebugMessenger()
 {
     if( App::get().enableValidationLayers )
     {
-        DestroyDebugUtilsMessengerEXT( App::get().getInstance().getInstanceRef(), nullptr );
+        DestroyDebugUtilsMessengerEXT( nullptr );
     }
 }
 
@@ -56,7 +54,6 @@ void DebugMessenger::populateDebugMessengerCreateInfo( VkDebugUtilsMessengerCrea
 }
 
 VkResult DebugMessenger::CreateDebugUtilsMessengerEXT(
-    VkInstance instance,
     const VkDebugUtilsMessengerCreateInfoEXT* pCreateInfo,
     const VkAllocationCallbacks* pAllocator,
     VkDebugUtilsMessengerEXT* pDebugMessenger
@@ -74,7 +71,7 @@ VkResult DebugMessenger::CreateDebugUtilsMessengerEXT(
     }
 }
 
-void DebugMessenger::DestroyDebugUtilsMessengerEXT( VkInstance instance, const VkAllocationCallbacks* pAllocator )
+void DebugMessenger::DestroyDebugUtilsMessengerEXT( const VkAllocationCallbacks* pAllocator )
 {
     auto func =
         ( PFN_vkDestroyDebugUtilsMessengerEXT )vkGetInstanceProcAddr( instance, "vkDestroyDebugUtilsMessengerEXT" );

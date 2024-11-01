@@ -1,16 +1,23 @@
 #pragma once
 
 #include <memory>
+#include <set>
+#include <vector>
 
 #include "LogicalDevice.hpp"
 #include "PhysicalDevice.hpp"
 #include "QueueFamilyIndices.hpp"
 #include "SwapChainSupportDetails.hpp"
+#include "window/Window.hpp"
 
 class Device
 {
 public:
-    Device();
+    Device(
+        Window& window,
+        std::vector< const char* > deviceExtensions,
+        std::optional< const std::vector< const char* > > validationLayers = std::nullopt
+    );
     ~Device() = default;
 
     operator VkPhysicalDevice&() { return *physicalDevice; }

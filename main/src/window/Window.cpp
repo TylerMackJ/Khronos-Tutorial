@@ -6,19 +6,32 @@
 
 using App = HelloTriangleApplication;
 
-Window::Window() : framebufferResized( false )
+Window::Window( int width, int height ) : framebufferResized( false )
 {
+    glfwInit();
     glfwWindowHint( GLFW_CLIENT_API, GLFW_NO_API );
-    // glfwWindowHint( GLFW_RESIZABLE, GLFW_FALSE );
 
-    window = glfwCreateWindow( App::get().WIDTH, App::get().HEIGHT, "Vulkan", nullptr, nullptr );
+    window = glfwCreateWindow( width, height, "Vulkan", nullptr, nullptr );
     glfwSetWindowUserPointer( window, this );
     glfwSetFramebufferSizeCallback( window, framebufferResizeCallback );
+
+    instance = std::make_unique< Instance >();
+    debugMessenger = std::make_unique< DebugMessenger >( *instance );
+
+    if( glfwCreateWindowSurface( *instance, window, nullptr, &surface ) != VK_SUCCESS )
+    {
+        throw std::runtime_error( "failed to create window surface!" );
+    }
 }
 
-Window::~Window() { glfwDestroyWindow( window ); }
-
-GLFWwindow* Window::get() const { return window; }
+Window::~Window()
+{
+    vkDestroySurfaceKHR( *instance, surface, nullptr );
+    debugMessenger.reset();
+    instance.reset();
+    glfwDestroyWindow( window );
+    glfwTerminate();
+}
 
 void Window::framebufferResizeCallback( GLFWwindow* window, int /*width*/, int /*height*/ )
 {

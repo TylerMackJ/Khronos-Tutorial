@@ -10,10 +10,9 @@ class Instance
 {
 public:
     Instance();
-
     ~Instance();
 
-    VkInstance& getInstanceRef() { return instance; };
+    operator VkInstance&() { return instance; }
 
 private:
     bool checkValidationLayerSupport();

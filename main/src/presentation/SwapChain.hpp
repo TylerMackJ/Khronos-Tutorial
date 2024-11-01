@@ -6,11 +6,12 @@
 #include <vector>
 
 #include "device/Device.hpp"
+#include "window/Window.hpp"
 
 class SwapChain
 {
 public:
-    SwapChain( Device& device );
+    SwapChain( Window& window, Device& device );
     ~SwapChain();
 
     VkSwapchainKHR& getSwapChainRef() { return swapChain; }
@@ -23,6 +24,7 @@ private:
     VkPresentModeKHR chooseSwapPresentMode( const std::vector< VkPresentModeKHR >& availablePresentModes );
     VkExtent2D chooseSwapExtent( const VkSurfaceCapabilitiesKHR& capabilities );
 
+    Window& window;
     Device& device;
 
     VkSwapchainKHR swapChain;

@@ -4,13 +4,12 @@
 #include <GLFW/glfw3.h>
 
 #include <optional>
+#include <set>
 #include <stdexcept>
 
 #include "QueueFamilyIndices.hpp"
 #include "SwapChainSupportDetails.hpp"
-#include "window/Instance.hpp"
-#include "window/Surface.hpp"
-
+#include "window/Window.hpp"
 
 class PhysicalDevice
 {
@@ -18,7 +17,7 @@ class PhysicalDevice
     friend class LogicalDevice;
 
 public:
-    PhysicalDevice();
+    PhysicalDevice( Window& window, std::set< std::string > requiredExtensions );
     ~PhysicalDevice() = default;
 
 private:
@@ -34,10 +33,12 @@ private:
     const VkSampleCountFlagBits& const getMSAASamples() { return msaaSamples; }
 
 private:
-    int rateDeviceSuitability( VkPhysicalDevice device );
-    static QueueFamilyIndices findQueueFamilies( VkPhysicalDevice device );
-    bool checkDeviceExtensionSupport( VkPhysicalDevice device );
+    int rateDeviceSuitability( VkPhysicalDevice device, std::set< std::string >& requiredExtensions );
+    static QueueFamilyIndices findQueueFamilies( VkPhysicalDevice& device, Window& window );
+    bool checkDeviceExtensionSupport( VkPhysicalDevice device, std::set< std::string >& requiredExtensions );
     SwapChainSupportDetails querySwapChainSupport( VkPhysicalDevice device );
+
+    Window& window;
 
     VkPhysicalDevice physicalDevice;
     VkPhysicalDeviceProperties properties;

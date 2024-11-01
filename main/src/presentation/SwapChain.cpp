@@ -10,9 +10,9 @@
 
 using App = HelloTriangleApplication;
 
-SwapChain::SwapChain( Device& device )
-    : device( device ), swapChain( VK_NULL_HANDLE ), swapChainImages(), swapChainImageFormat( VK_FORMAT_UNDEFINED ),
-      swapChainExtent( { 0, 0 } )
+SwapChain::SwapChain( Window& window, Device& device )
+    : window( window ), device( device ), swapChain( VK_NULL_HANDLE ), swapChainImages(),
+      swapChainImageFormat( VK_FORMAT_UNDEFINED ), swapChainExtent( { 0, 0 } )
 {
     SwapChainSupportDetails swapChainSupport = device.getSwapChainSupportDetails();
 
@@ -28,7 +28,7 @@ SwapChain::SwapChain( Device& device )
 
     VkSwapchainCreateInfoKHR createInfo = {};
     createInfo.sType = VK_STRUCTURE_TYPE_SWAPCHAIN_CREATE_INFO_KHR;
-    createInfo.surface = App::get().getSurface().getSurfaceRef();
+    createInfo.surface = window;
     createInfo.minImageCount = imageCount;
     createInfo.imageFormat = surfaceFormat.format;
     createInfo.imageColorSpace = surfaceFormat.colorSpace;
@@ -106,7 +106,7 @@ VkExtent2D SwapChain::chooseSwapExtent( const VkSurfaceCapabilitiesKHR& capabili
     else
     {
         int width, height;
-        glfwGetFramebufferSize( App::get().getWindow().get(), &width, &height );
+        glfwGetFramebufferSize( window, &width, &height );
 
         VkExtent2D actualExtent = { static_cast< uint32_t >( width ), static_cast< uint32_t >( height ) };
         actualExtent.width =

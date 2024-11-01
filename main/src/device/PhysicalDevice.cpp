@@ -7,22 +7,23 @@
 
 using App = HelloTriangleApplication;
 
-PhysicalDevice::PhysicalDevice() : physicalDevice( VK_NULL_HANDLE ), msaaSamples( VK_SAMPLE_COUNT_1_BIT )
+PhysicalDevice::PhysicalDevice( Window& window, std::set< std::string > requiredExtensions )
+    : window( window ), physicalDevice( VK_NULL_HANDLE ), msaaSamples( VK_SAMPLE_COUNT_1_BIT )
 {
     uint32_t deviceCount = 0;
-    vkEnumeratePhysicalDevices( App::get().getInstance().getInstanceRef(), &deviceCount, nullptr );
+    vkEnumeratePhysicalDevices( window, &deviceCount, nullptr );
     if( deviceCount == 0 )
     {
         throw std::runtime_error( "failed to find GPUs with Vulkan support!" );
     }
     std::vector< VkPhysicalDevice > devices( deviceCount );
-    vkEnumeratePhysicalDevices( App::get().getInstance().getInstanceRef(), &deviceCount, devices.data() );
+    vkEnumeratePhysicalDevices( window, &deviceCount, devices.data() );
 
     std::multimap< int, VkPhysicalDevice > candidates;
 
     for( const auto& device : devices )
     {
-        int score = rateDeviceSuitability( device );
+        int score = rateDeviceSuitability( device, requiredExtensions );
         candidates.insert( std::make_pair( score, device ) );
     }
 
@@ -66,7 +67,7 @@ PhysicalDevice::PhysicalDevice() : physicalDevice( VK_NULL_HANDLE ), msaaSamples
     }
 }
 
-const QueueFamilyIndices PhysicalDevice::getQueueFamilyIndices() { return findQueueFamilies( physicalDevice ); }
+const QueueFamilyIndices PhysicalDevice::getQueueFamilyIndices() { return findQueueFamilies( physicalDevice, window ); }
 
 const SwapChainSupportDetails PhysicalDevice::getSwapChainSupportDetails()
 {
@@ -95,7 +96,7 @@ const VkFormat PhysicalDevice::findSupportedFormat(
     throw std::runtime_error( "failed to find supported format!" );
 }
 
-int PhysicalDevice::rateDeviceSuitability( VkPhysicalDevice device )
+int PhysicalDevice::rateDeviceSuitability( VkPhysicalDevice device, std::set< std::string >& requiredExtensions )
 {
     VkPhysicalDeviceProperties deviceProperties;
     VkPhysicalDeviceFeatures deviceFeatures;
@@ -111,7 +112,7 @@ int PhysicalDevice::rateDeviceSuitability( VkPhysicalDevice device )
 
     score += deviceProperties.limits.maxImageDimension2D;
 
-    bool extensionsSupported = checkDeviceExtensionSupport( device );
+    bool extensionsSupported = checkDeviceExtensionSupport( device, requiredExtensions );
     bool swapChainAdequate = false;
     if( extensionsSupported )
     {
@@ -119,7 +120,7 @@ int PhysicalDevice::rateDeviceSuitability( VkPhysicalDevice device )
         swapChainAdequate = !swapChainSupport.formats.empty() && !swapChainSupport.presentModes.empty();
     }
 
-    if( !deviceFeatures.geometryShader || !findQueueFamilies( device ).isComplete() || !extensionsSupported ||
+    if( !deviceFeatures.geometryShader || !findQueueFamilies( device, window ).isComplete() || !extensionsSupported ||
         !swapChainAdequate || !deviceFeatures.samplerAnisotropy )
     {
         return 0;
@@ -128,7 +129,7 @@ int PhysicalDevice::rateDeviceSuitability( VkPhysicalDevice device )
     return score;
 }
 
-QueueFamilyIndices PhysicalDevice::findQueueFamilies( VkPhysicalDevice device )
+QueueFamilyIndices PhysicalDevice::findQueueFamilies( VkPhysicalDevice& device, Window& window )
 {
     QueueFamilyIndices indices;
 
@@ -146,7 +147,7 @@ QueueFamilyIndices PhysicalDevice::findQueueFamilies( VkPhysicalDevice device )
             indices.graphicsFamily = i;
         }
         VkBool32 presentSupport = false;
-        vkGetPhysicalDeviceSurfaceSupportKHR( device, i, App::get().getSurface().getSurfaceRef(), &presentSupport );
+        vkGetPhysicalDeviceSurfaceSupportKHR( device, i, window, &presentSupport );
         if( presentSupport )
         {
             indices.presentFamily = i;
@@ -161,17 +162,13 @@ QueueFamilyIndices PhysicalDevice::findQueueFamilies( VkPhysicalDevice device )
     return indices;
 }
 
-bool PhysicalDevice::checkDeviceExtensionSupport( VkPhysicalDevice device )
+bool PhysicalDevice::checkDeviceExtensionSupport( VkPhysicalDevice device, std::set< std::string >& requiredExtensions )
 {
     uint32_t extensionCount;
     vkEnumerateDeviceExtensionProperties( device, nullptr, &extensionCount, nullptr );
 
     std::vector< VkExtensionProperties > availableExtensions( extensionCount );
     vkEnumerateDeviceExtensionProperties( device, nullptr, &extensionCount, availableExtensions.data() );
-
-    std::set< std::string > requiredExtensions(
-        App::get().deviceExtensions.begin(), App::get().deviceExtensions.end()
-    );
 
     for( const auto& extension : availableExtensions )
     {
@@ -185,28 +182,22 @@ SwapChainSupportDetails PhysicalDevice::querySwapChainSupport( VkPhysicalDevice 
 {
     SwapChainSupportDetails details;
 
-    vkGetPhysicalDeviceSurfaceCapabilitiesKHR( device, App::get().getSurface().getSurfaceRef(), &details.capabilities );
+    vkGetPhysicalDeviceSurfaceCapabilitiesKHR( device, window, &details.capabilities );
 
     uint32_t formatCount;
-    vkGetPhysicalDeviceSurfaceFormatsKHR( device, App::get().getSurface().getSurfaceRef(), &formatCount, nullptr );
+    vkGetPhysicalDeviceSurfaceFormatsKHR( device, window, &formatCount, nullptr );
     if( formatCount > 0 )
     {
         details.formats.resize( formatCount );
-        vkGetPhysicalDeviceSurfaceFormatsKHR(
-            device, App::get().getSurface().getSurfaceRef(), &formatCount, details.formats.data()
-        );
+        vkGetPhysicalDeviceSurfaceFormatsKHR( device, window, &formatCount, details.formats.data() );
     }
 
     uint32_t presentModeCount;
-    vkGetPhysicalDeviceSurfacePresentModesKHR(
-        device, App::get().getSurface().getSurfaceRef(), &presentModeCount, nullptr
-    );
+    vkGetPhysicalDeviceSurfacePresentModesKHR( device, window, &presentModeCount, nullptr );
     if( presentModeCount > 0 )
     {
         details.presentModes.resize( presentModeCount );
-        vkGetPhysicalDeviceSurfacePresentModesKHR(
-            device, App::get().getSurface().getSurfaceRef(), &presentModeCount, details.presentModes.data()
-        );
+        vkGetPhysicalDeviceSurfacePresentModesKHR( device, window, &presentModeCount, details.presentModes.data() );
     }
 
     return details;

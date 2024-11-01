@@ -63,9 +63,7 @@ add_executable(${PROJECT_NAME}
     src/presentation/ImageView.cpp
     src/presentation/SwapChain.cpp
     src/window/DebugMessenger.cpp
-    src/window/GLFWInit.cpp
     src/window/Instance.cpp
-    src/window/Surface.cpp
     src/window/Window.cpp
 )
 target_precompile_headers(${PROJECT_NAME} PRIVATE
@@ -91,7 +89,6 @@ target_precompile_headers(${PROJECT_NAME} PRIVATE
     src/presentation/SwapChain.hpp
     src/window/DebugMessenger.hpp
     src/window/Instance.hpp
-    src/window/Surface.hpp
     src/window/Window.hpp
 )
 

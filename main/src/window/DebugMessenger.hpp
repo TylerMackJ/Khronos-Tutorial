@@ -8,8 +8,10 @@
 class DebugMessenger
 {
 public:
-    DebugMessenger();
+    DebugMessenger( Instance& instance );
     ~DebugMessenger();
+
+    operator VkDebugUtilsMessengerEXT&() { return debugMessenger; }
 
     static VKAPI_ATTR VkBool32 VKAPI_CALL debugCallback(
         VkDebugUtilsMessageSeverityFlagBitsEXT messageSeverity,
@@ -22,13 +24,14 @@ public:
 
 private:
     VkResult CreateDebugUtilsMessengerEXT(
-        VkInstance instance,
         const VkDebugUtilsMessengerCreateInfoEXT* pCreateInfo,
         const VkAllocationCallbacks* pAllocator,
         VkDebugUtilsMessengerEXT* pDebugMessenger
     );
 
-    void DestroyDebugUtilsMessengerEXT( VkInstance instance, const VkAllocationCallbacks* pAllocator );
+    void DestroyDebugUtilsMessengerEXT( const VkAllocationCallbacks* pAllocator );
+
+    Instance& instance;
 
     VkDebugUtilsMessengerEXT debugMessenger;
 };

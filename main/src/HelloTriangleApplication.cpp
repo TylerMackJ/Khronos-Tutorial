@@ -15,13 +15,15 @@ HelloTriangleApplication* HelloTriangleApplication::singletonInstance = nullptr;
 
 void HelloTriangleApplication::constructor()
 {
-    glfw = std::make_unique< GLFWInit >();
-    window = std::make_unique< Window >();
-    instance = std::make_unique< Instance >();
-    debugMessenger = std::make_unique< DebugMessenger >();
-    surface = std::make_unique< Surface >();
-    device = std::make_unique< Device >();
-    swapChain = std::make_unique< SwapChain >( *device );
+    window = std::make_unique< Window >( WIDTH, HEIGHT );
+    device = std::make_unique< Device >(
+        *window,
+        deviceExtensions,
+#ifndef NDEBUG
+        std::make_optional< std::vector< const char* > >( validationLayers )
+#endif
+    );
+    swapChain = std::make_unique< SwapChain >( *window, *device );
     createImageViews();
     textureSampler = std::make_unique< TextureSampler >( *device );
     renderPass = std::make_unique< RenderPass >( *device );
@@ -77,7 +79,7 @@ void HelloTriangleApplication::constructor()
 
 void HelloTriangleApplication::run()
 {
-    while( !glfwWindowShouldClose( window->get() ) )
+    while( !glfwWindowShouldClose( *window ) )
     {
         glfwPollEvents();
         drawFrame();
@@ -166,10 +168,10 @@ void HelloTriangleApplication::drawFrame()
 void HelloTriangleApplication::recreateSwapChain()
 {
     int width = 0, height = 0;
-    glfwGetFramebufferSize( window->get(), &width, &height );
+    glfwGetFramebufferSize( *window, &width, &height );
     while( width == 0 || height == 0 )
     {
-        glfwGetFramebufferSize( window->get(), &width, &height );
+        glfwGetFramebufferSize( *window, &width, &height );
         glfwWaitEvents();
     }
 
@@ -184,7 +186,7 @@ void HelloTriangleApplication::recreateSwapChain()
     }
     swapChain.reset();
 
-    swapChain = std::make_unique< SwapChain >( *device );
+    swapChain = std::make_unique< SwapChain >( *window, *device );
     createImageViews();
     colorImage = std::make_unique< Image >(
         *device,
