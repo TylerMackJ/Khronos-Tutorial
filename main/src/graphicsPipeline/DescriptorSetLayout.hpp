@@ -14,7 +14,8 @@ public:
     DescriptorSetLayout( Device& device );
     ~DescriptorSetLayout();
 
-    const VkDescriptorSetLayout& getDescriptorSetLayout() const { return descriptorSetLayout; }
+    operator VkDescriptorSetLayout&() { return descriptorSetLayout; }
+    operator VkDescriptorSetLayout*() { return &descriptorSetLayout; }
 
 private:
     Device& device;

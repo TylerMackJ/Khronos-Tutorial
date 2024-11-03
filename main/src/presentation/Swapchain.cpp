@@ -7,14 +7,16 @@
 #include "device/SwapchainSupportDetails.hpp"
 
 Swapchain::Swapchain( Window& window, Device& device )
-    : window( window ), device( device ), swapchain( VK_NULL_HANDLE ), swapchainImages(),
-      swapchainImageFormat( VK_FORMAT_UNDEFINED ), swapchainExtent( { 0, 0 } )
+    : window( window ), device( device ), swapchain( VK_NULL_HANDLE ), swapchainImages(), format( VK_FORMAT_UNDEFINED ),
+      extent( { 0, 0 } )
 {
     SwapchainSupportDetails swapchainSupport = device.getSwapchainSupportDetails();
 
     VkSurfaceFormatKHR surfaceFormat = chooseSwapSurfaceFormat( swapchainSupport.formats );
     VkPresentModeKHR presentMode = chooseSwapPresentMode( swapchainSupport.presentModes );
-    VkExtent2D extent = chooseSwapExtent( swapchainSupport.capabilities );
+
+    format = surfaceFormat.format;
+    extent = chooseSwapExtent( swapchainSupport.capabilities );
 
     uint32_t imageCount = swapchainSupport.capabilities.minImageCount + 1;
     if( swapchainSupport.capabilities.maxImageCount > 0 && imageCount > swapchainSupport.capabilities.maxImageCount )
@@ -26,7 +28,7 @@ Swapchain::Swapchain( Window& window, Device& device )
     createInfo.sType = VK_STRUCTURE_TYPE_SWAPCHAIN_CREATE_INFO_KHR;
     createInfo.surface = window;
     createInfo.minImageCount = imageCount;
-    createInfo.imageFormat = surfaceFormat.format;
+    createInfo.imageFormat = format;
     createInfo.imageColorSpace = surfaceFormat.colorSpace;
     createInfo.imageExtent = extent;
     createInfo.imageArrayLayers = 1;
@@ -60,9 +62,6 @@ Swapchain::Swapchain( Window& window, Device& device )
     vkGetSwapchainImagesKHR( device, swapchain, &imageCount, nullptr );
     swapchainImages.resize( imageCount );
     vkGetSwapchainImagesKHR( device, swapchain, &imageCount, swapchainImages.data() );
-
-    swapchainImageFormat = surfaceFormat.format;
-    swapchainExtent = extent;
 }
 
 Swapchain::~Swapchain() { vkDestroySwapchainKHR( device, swapchain, nullptr ); }

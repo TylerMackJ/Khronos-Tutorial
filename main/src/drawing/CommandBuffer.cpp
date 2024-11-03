@@ -6,13 +6,13 @@
 
 using App = HelloTriangleApplication;
 
-CommandBuffer::CommandBuffer( Device& device ) : device( device )
+CommandBuffer::CommandBuffer( Device& device, CommandPool& commandPool, uint32_t maxFramesInFlight ) : device( device )
 {
-    commandBuffers.resize( App::get().MAX_FRAMES_IN_FLIGHT );
+    commandBuffers.resize( maxFramesInFlight );
 
     VkCommandBufferAllocateInfo allocInfo{};
     allocInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
-    allocInfo.commandPool = App::get().getCommandPool().getCommandPool();
+    allocInfo.commandPool = commandPool;
     allocInfo.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
     allocInfo.commandBufferCount = ( uint32_t )commandBuffers.size();
 
@@ -42,41 +42,41 @@ void CommandBuffer::recordCommandBuffer( VkCommandBuffer commandBuffer, uint32_t
 
     VkRenderPassBeginInfo renderPassInfo{};
     renderPassInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
-    renderPassInfo.renderPass = App::get().getRenderPass().getRenderPass();
+    renderPassInfo.renderPass = App::get().getRenderPass();
     renderPassInfo.framebuffer = App::get().getFramebuffers().getFramebuffers()[imageIndex];
     renderPassInfo.renderArea.offset = { 0, 0 };
-    renderPassInfo.renderArea.extent = App::get().getSwapchain().getSwapchainExtent();
+    renderPassInfo.renderArea.extent = App::get().getSwapchain();
     renderPassInfo.clearValueCount = static_cast< uint32_t >( clearValues.size() );
     renderPassInfo.pClearValues = clearValues.data();
 
     vkCmdBeginRenderPass( commandBuffer, &renderPassInfo, VK_SUBPASS_CONTENTS_INLINE );
 
-    vkCmdBindPipeline( commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, App::get().getGraphicsPipeline().getPipeline() );
+    vkCmdBindPipeline( commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, App::get().getGraphicsPipeline() );
 
     VkViewport viewport{};
     viewport.x = 0.0f;
     viewport.y = 0.0f;
-    viewport.width = static_cast< float >( App::get().getSwapchain().getSwapchainExtent().width );
-    viewport.height = static_cast< float >( App::get().getSwapchain().getSwapchainExtent().height );
+    viewport.width = static_cast< float >( App::get().getSwapchain().width() );
+    viewport.height = static_cast< float >( App::get().getSwapchain().height() );
     viewport.minDepth = 0.0f;
     viewport.maxDepth = 1.0f;
     vkCmdSetViewport( commandBuffer, 0, 1, &viewport );
 
     VkRect2D scissor{};
     scissor.offset = { 0, 0 };
-    scissor.extent = App::get().getSwapchain().getSwapchainExtent();
+    scissor.extent = App::get().getSwapchain();
     vkCmdSetScissor( commandBuffer, 0, 1, &scissor );
 
-    VkBuffer vertexBuffers[] = { App::get().getVertexBuffer().getBuffer() };
+    VkBuffer vertexBuffers[] = { App::get().getVertexBuffer() };
     VkDeviceSize offsets[] = { 0 };
     vkCmdBindVertexBuffers( commandBuffer, 0, 1, vertexBuffers, offsets );
 
-    vkCmdBindIndexBuffer( commandBuffer, App::get().getIndexBuffer().getBuffer(), 0, VK_INDEX_TYPE_UINT32 );
+    vkCmdBindIndexBuffer( commandBuffer, App::get().getIndexBuffer(), 0, VK_INDEX_TYPE_UINT32 );
 
     vkCmdBindDescriptorSets(
         commandBuffer,
         VK_PIPELINE_BIND_POINT_GRAPHICS,
-        App::get().getGraphicsPipeline().getPipelineLayout(),
+        App::get().getGraphicsPipeline(),
         0,
         1,
         &App::get().getDescriptorSets()[imageIndex],
@@ -100,7 +100,7 @@ VkCommandBuffer CommandBuffer::beginSingleTimeCommands( Device& device )
     VkCommandBufferAllocateInfo allocInfo{};
     allocInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
     allocInfo.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
-    allocInfo.commandPool = App::get().getCommandPool().getCommandPool();
+    allocInfo.commandPool = App::get().getCommandPool();
     allocInfo.commandBufferCount = 1;
 
     VkCommandBuffer commandBuffer;
@@ -126,5 +126,5 @@ void CommandBuffer::endSingleTimeCommands( Device& device, VkCommandBuffer comma
     vkQueueSubmit( device.getGraphicsQueue(), 1, &submitInfo, VK_NULL_HANDLE );
     vkQueueWaitIdle( device.getGraphicsQueue() );
 
-    vkFreeCommandBuffers( device, App::get().getCommandPool().getCommandPool(), 1, &commandBuffer );
+    vkFreeCommandBuffers( device, App::get().getCommandPool(), 1, &commandBuffer );
 }

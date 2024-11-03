@@ -14,10 +14,14 @@ public:
     Swapchain( Window& window, Device& device );
     ~Swapchain();
 
-    VkSwapchainKHR& getSwapchainRef() { return swapchain; }
+    operator VkSwapchainKHR&() { return swapchain; }
+    operator VkFormat&() { return format; }
+    operator VkExtent2D&() { return extent; }
+
+    const uint32_t width() { return extent.width; }
+    const uint32_t height() { return extent.height; }
+
     std::vector< VkImage >& getSwapchainImages() { return swapchainImages; }
-    VkFormat& getSwapchainImageFormat() { return swapchainImageFormat; }
-    VkExtent2D& getSwapchainExtent() { return swapchainExtent; }
 
 private:
     VkSurfaceFormatKHR chooseSwapSurfaceFormat( const std::vector< VkSurfaceFormatKHR >& availableFormats );
@@ -29,6 +33,6 @@ private:
 
     VkSwapchainKHR swapchain;
     std::vector< VkImage > swapchainImages;
-    VkFormat swapchainImageFormat;
-    VkExtent2D swapchainExtent;
+    VkFormat format;
+    VkExtent2D extent;
 };

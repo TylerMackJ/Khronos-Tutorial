@@ -10,7 +10,7 @@ using App = HelloTriangleApplication;
 RenderPass::RenderPass( Device& device ) : device( device )
 {
     VkAttachmentDescription colorAttachment{};
-    colorAttachment.format = App::get().getSwapchain().getSwapchainImageFormat();
+    colorAttachment.format = App::get().getSwapchain();
     colorAttachment.samples = device.getMSAASamples();
     colorAttachment.loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR;
     colorAttachment.storeOp = VK_ATTACHMENT_STORE_OP_STORE;
@@ -38,7 +38,7 @@ RenderPass::RenderPass( Device& device ) : device( device )
     depthAttachmentRef.layout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL;
 
     VkAttachmentDescription colorAttachmentResolve{};
-    colorAttachmentResolve.format = App::get().getSwapchain().getSwapchainImageFormat();
+    colorAttachmentResolve.format = App::get().getSwapchain();
     colorAttachmentResolve.samples = VK_SAMPLE_COUNT_1_BIT;
     colorAttachmentResolve.loadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE;
     colorAttachmentResolve.storeOp = VK_ATTACHMENT_STORE_OP_STORE;

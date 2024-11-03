@@ -9,7 +9,7 @@ public:
     RenderPass( Device& device );
     ~RenderPass();
 
-    VkRenderPass& getRenderPass() { return renderPass; }
+    operator VkRenderPass&() { return renderPass; }
 
 private:
     Device& device;

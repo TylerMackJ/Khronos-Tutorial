@@ -32,9 +32,9 @@ public:
     );
     ~Image();
 
-    const VkImage& getImage() const { return image; }
-    const VkFormat& getFormat() const { return format; }
-    const VkImageView& getImageView() const { return imageView->getImageView(); }
+    operator VkImage&() { return image; }
+    operator VkFormat&() { return format; }
+    operator VkImageView&() { return *imageView; }
 
     void transitionLayout( VkImageLayout oldLayout, VkImageLayout newLayout );
     void copyBufferToImage( Buffer& buffer );

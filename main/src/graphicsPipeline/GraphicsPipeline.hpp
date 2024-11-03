@@ -11,8 +11,8 @@ public:
     GraphicsPipeline( Device& device );
     ~GraphicsPipeline();
 
-    const VkPipeline& getPipeline() const { return graphicsPipeline; }
-    const VkPipelineLayout& getPipelineLayout() const { return pipelineLayout; }
+    operator VkPipeline&() { return graphicsPipeline; }
+    operator VkPipelineLayout&() { return pipelineLayout; }
 
 private:
     VkShaderModule createShaderModule( const std::vector< char >& code );

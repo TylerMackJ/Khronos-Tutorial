@@ -199,9 +199,7 @@ void Image::copyBufferToImage( Buffer& buffer )
     region.imageOffset = { 0, 0, 0 };
     region.imageExtent = { width, height, 1 };
 
-    vkCmdCopyBufferToImage(
-        commandBuffer, buffer.getBuffer(), image, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, 1, &region
-    );
+    vkCmdCopyBufferToImage( commandBuffer, buffer, image, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, 1, &region );
 
     CommandBuffer::endSingleTimeCommands( device, commandBuffer );
 }

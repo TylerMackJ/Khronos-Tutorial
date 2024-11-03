@@ -113,7 +113,7 @@ GraphicsPipeline::GraphicsPipeline( Device& device )
     VkPipelineLayoutCreateInfo pipelineLayoutInfo{};
     pipelineLayoutInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
     pipelineLayoutInfo.setLayoutCount = 1;
-    pipelineLayoutInfo.pSetLayouts = &App::get().getDescriptorSetLayout().getDescriptorSetLayout();
+    pipelineLayoutInfo.pSetLayouts = App::get().getDescriptorSetLayout();
     pipelineLayoutInfo.pushConstantRangeCount = 0;
     pipelineLayoutInfo.pPushConstantRanges = nullptr;
 
@@ -135,7 +135,7 @@ GraphicsPipeline::GraphicsPipeline( Device& device )
     pipelineInfo.pColorBlendState = &colorBlending;
     pipelineInfo.pDynamicState = &dynamicState;
     pipelineInfo.layout = pipelineLayout;
-    pipelineInfo.renderPass = App::get().getRenderPass().getRenderPass();
+    pipelineInfo.renderPass = App::get().getRenderPass();
     pipelineInfo.subpass = 0;
     pipelineInfo.basePipelineHandle = VK_NULL_HANDLE;
     pipelineInfo.basePipelineIndex = -1;

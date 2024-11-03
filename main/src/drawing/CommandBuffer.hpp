@@ -5,12 +5,13 @@
 
 #include <vector>
 
+#include "CommandPool.hpp"
 #include "device/Device.hpp"
 
 class CommandBuffer
 {
 public:
-    CommandBuffer( Device& Device );
+    CommandBuffer( Device& Device, CommandPool& commandPool, uint32_t maxFramesInFlight );
     ~CommandBuffer();
 
     void recordCommandBuffer( VkCommandBuffer commandBuffer, uint32_t imageIndex );

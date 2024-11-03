@@ -11,7 +11,7 @@ public:
     CommandPool( Device& device );
     ~CommandPool();
 
-    VkCommandPool& getCommandPool() { return commandPool; }
+    operator VkCommandPool&() { return commandPool; }
 
 private:
     Device& device;

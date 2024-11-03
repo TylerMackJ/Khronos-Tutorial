@@ -14,8 +14,8 @@ public:
     Buffer( Device& device, VkDeviceSize size, VkBufferUsageFlags usage, VkMemoryPropertyFlags properties );
     ~Buffer();
 
-    const VkBuffer& getBuffer() const { return buffer; }
-    const VkDeviceMemory& getBufferMemory() const { return bufferMemory; }
+    operator VkBuffer&() { return buffer; }
+    operator VkDeviceMemory&() { return bufferMemory; }
 
     void mapMemory( VkDeviceSize offset, VkDeviceSize size, VkMemoryMapFlags flags );
     void copyTo( const void* data );

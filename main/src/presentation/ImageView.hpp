@@ -11,7 +11,7 @@ public:
     ImageView( Device& device, VkImage image, VkFormat format, VkImageAspectFlags aspectFlags, uint32_t mipLevels );
     ~ImageView();
 
-    const VkImageView& const getImageView() { return imageView; }
+    operator VkImageView&() { return imageView; }
 
 private:
     Device& device;

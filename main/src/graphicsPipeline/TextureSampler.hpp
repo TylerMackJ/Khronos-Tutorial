@@ -11,7 +11,7 @@ public:
     TextureSampler( Device& device );
     ~TextureSampler();
 
-    const VkSampler& getSampler() const { return sampler; }
+    operator VkSampler&() { return sampler; }
 
 private:
     Device& device;

@@ -77,7 +77,7 @@ void Buffer::copyBuffer( Device& device, Buffer& srcBuffer, Buffer& dstBuffer, V
     copyRegion.srcOffset = 0;
     copyRegion.dstOffset = 0;
     copyRegion.size = size;
-    vkCmdCopyBuffer( commandBuffer, srcBuffer.getBuffer(), dstBuffer.getBuffer(), 1, &copyRegion );
+    vkCmdCopyBuffer( commandBuffer, srcBuffer, dstBuffer, 1, &copyRegion );
 
     CommandBuffer::endSingleTimeCommands( device, commandBuffer );
 }

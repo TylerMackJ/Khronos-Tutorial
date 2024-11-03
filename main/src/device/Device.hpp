@@ -23,9 +23,6 @@ public:
     operator VkPhysicalDevice&() { return *physicalDevice; }
     operator VkDevice&() { return *logicalDevice; }
 
-    PhysicalDevice& getPhysicalDevice() { return *physicalDevice; }
-    LogicalDevice& getLogicalDevice() { return *logicalDevice; }
-
     const QueueFamilyIndices getQueueFamilyIndices() { return physicalDevice->getQueueFamilyIndices(); }
     const SwapchainSupportDetails getSwapchainSupportDetails() { return physicalDevice->getSwapchainSupportDetails(); };
     const VkSampleCountFlagBits& const getMSAASamples() { return physicalDevice->getMSAASamples(); }

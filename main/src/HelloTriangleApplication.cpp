@@ -32,11 +32,11 @@ void HelloTriangleApplication::constructor()
     commandPool = std::make_unique< CommandPool >( *device );
     colorImage = std::make_unique< Image >(
         *device,
-        getSwapchain().getSwapchainExtent().width,
-        getSwapchain().getSwapchainExtent().height,
+        getSwapchain().width(),
+        getSwapchain().height(),
         1,
         device->getMSAASamples(),
-        getSwapchain().getSwapchainImageFormat(),
+        getSwapchain(),
         VK_IMAGE_TILING_OPTIMAL,
         VK_IMAGE_USAGE_TRANSIENT_ATTACHMENT_BIT | VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT,
         VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT
@@ -44,8 +44,8 @@ void HelloTriangleApplication::constructor()
     colorImage->createImageView( VK_IMAGE_ASPECT_COLOR_BIT );
     depthImage = std::make_unique< Image >(
         *device,
-        getSwapchain().getSwapchainExtent().width,
-        getSwapchain().getSwapchainExtent().height,
+        getSwapchain().width(),
+        getSwapchain().height(),
         1,
         device->getMSAASamples(),
         findDepthFormat(),
@@ -72,7 +72,7 @@ void HelloTriangleApplication::constructor()
     createUniformBuffers();
     descriptorPool = std::make_unique< DescriptorPool >( *device, static_cast< uint32_t >( MAX_FRAMES_IN_FLIGHT ) );
     createDescriptorSets();
-    commandBuffer = std::make_unique< CommandBuffer >( *device );
+    commandBuffer = std::make_unique< CommandBuffer >( *device, *commandPool, MAX_FRAMES_IN_FLIGHT );
     syncObjects = std::make_unique< SyncObjects >( *device );
     currentFrame = 0;
 }
@@ -95,7 +95,7 @@ void HelloTriangleApplication::drawFrame()
     uint32_t imageIndex;
     VkResult result = vkAcquireNextImageKHR(
         *device,
-        getSwapchain().getSwapchainRef(),
+        getSwapchain(),
         UINT64_MAX,
         getSyncObjects().getImageAvailableSemaphores()[currentFrame],
         VK_NULL_HANDLE,
@@ -144,7 +144,7 @@ void HelloTriangleApplication::drawFrame()
     presentInfo.sType = VK_STRUCTURE_TYPE_PRESENT_INFO_KHR;
     presentInfo.waitSemaphoreCount = 1;
     presentInfo.pWaitSemaphores = signalSemaphores;
-    VkSwapchainKHR swapchains[] = { getSwapchain().getSwapchainRef() };
+    VkSwapchainKHR swapchains[] = { getSwapchain() };
     presentInfo.swapchainCount = 1;
     presentInfo.pSwapchains = swapchains;
     presentInfo.pImageIndices = &imageIndex;
@@ -190,11 +190,11 @@ void HelloTriangleApplication::recreateSwapchain()
     createImageViews();
     colorImage = std::make_unique< Image >(
         *device,
-        getSwapchain().getSwapchainExtent().width,
-        getSwapchain().getSwapchainExtent().height,
+        getSwapchain().width(),
+        getSwapchain().height(),
         1,
         device->getMSAASamples(),
-        getSwapchain().getSwapchainImageFormat(),
+        getSwapchain(),
         VK_IMAGE_TILING_OPTIMAL,
         VK_IMAGE_USAGE_TRANSIENT_ATTACHMENT_BIT | VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT,
         VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT
@@ -202,8 +202,8 @@ void HelloTriangleApplication::recreateSwapchain()
     colorImage->createImageView( VK_IMAGE_ASPECT_COLOR_BIT );
     depthImage = std::make_unique< Image >(
         *device,
-        getSwapchain().getSwapchainExtent().width,
-        getSwapchain().getSwapchainExtent().height,
+        getSwapchain().width(),
+        getSwapchain().height(),
         1,
         device->getMSAASamples(),
         findDepthFormat(),
@@ -228,10 +228,7 @@ void HelloTriangleApplication::updateUniformBuffer( uint32_t currentImage )
     ubo.view =
         glm::lookAt( glm::vec3( 2.0f, 2.0f, 2.0f ), glm::vec3( 0.0f, 0.0f, 0.0f ), glm::vec3( 0.0f, 0.0f, 1.0f ) );
     ubo.proj = glm::perspective(
-        glm::radians( 45.0f ),
-        getSwapchain().getSwapchainExtent().width / ( float )getSwapchain().getSwapchainExtent().height,
-        0.1f,
-        10.0f
+        glm::radians( 45.0f ), getSwapchain().width() / ( float )getSwapchain().height(), 0.1f, 10.0f
     );
     ubo.proj[1][1] *= -1;
 
@@ -253,11 +250,7 @@ void HelloTriangleApplication::createImageViews()
     for( size_t i = 0; i < getSwapchain().getSwapchainImages().size(); i++ )
     {
         imageViews[i] = std::make_unique< ImageView >(
-            *device,
-            getSwapchain().getSwapchainImages()[i],
-            getSwapchain().getSwapchainImageFormat(),
-            VK_IMAGE_ASPECT_COLOR_BIT,
-            1
+            *device, getSwapchain().getSwapchainImages()[i], getSwapchain(), VK_IMAGE_ASPECT_COLOR_BIT, 1
         );
     }
 }
@@ -273,9 +266,9 @@ void HelloTriangleApplication::createVertexBuffer()
     );
 
     void* data;
-    vkMapMemory( *device, stagingBuffer->getBufferMemory(), 0, bufferSize, 0, &data );
+    vkMapMemory( *device, *stagingBuffer, 0, bufferSize, 0, &data );
     memcpy( data, vikingRoomModel->getVertices().data(), ( size_t )bufferSize );
-    vkUnmapMemory( *device, stagingBuffer->getBufferMemory() );
+    vkUnmapMemory( *device, *stagingBuffer );
 
     vertexBuffer = std::make_unique< Buffer >(
         *device,
@@ -333,10 +326,10 @@ void HelloTriangleApplication::createUniformBuffers()
 
 void HelloTriangleApplication::createDescriptorSets()
 {
-    std::vector< VkDescriptorSetLayout > layouts( MAX_FRAMES_IN_FLIGHT, descriptorSetLayout->getDescriptorSetLayout() );
+    std::vector< VkDescriptorSetLayout > layouts( MAX_FRAMES_IN_FLIGHT, *descriptorSetLayout );
     VkDescriptorSetAllocateInfo allocInfo = {};
     allocInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO;
-    allocInfo.descriptorPool = descriptorPool->getDescriptorPool();
+    allocInfo.descriptorPool = *descriptorPool;
     allocInfo.descriptorSetCount = static_cast< uint32_t >( MAX_FRAMES_IN_FLIGHT );
     allocInfo.pSetLayouts = layouts.data();
 
@@ -349,14 +342,14 @@ void HelloTriangleApplication::createDescriptorSets()
     for( size_t i = 0; i < MAX_FRAMES_IN_FLIGHT; i++ )
     {
         VkDescriptorBufferInfo bufferInfo{};
-        bufferInfo.buffer = uniformBuffers[i]->getBuffer();
+        bufferInfo.buffer = *( uniformBuffers[i] );
         bufferInfo.offset = 0;
         bufferInfo.range = sizeof( UniformBufferObject );
 
         VkDescriptorImageInfo imageInfo{};
         imageInfo.imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
-        imageInfo.imageView = textureImage->getImageView();
-        imageInfo.sampler = textureSampler->getSampler();
+        imageInfo.imageView = *textureImage;
+        imageInfo.sampler = *textureSampler;
 
         std::array< VkWriteDescriptorSet, 2 > descriptorWrites{};
 
