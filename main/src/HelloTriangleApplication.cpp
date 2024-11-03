@@ -388,7 +388,7 @@ std::vector< char > HelloTriangleApplication::readFile( const std::string& filen
 
     if( !file.is_open() )
     {
-        throw std::runtime_error( "failed to open file!" );
+        throw std::runtime_error( "failed to open file: " + filename + "!" );
     }
 
     size_t fileSize = ( size_t )file.tellg();
