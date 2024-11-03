@@ -1,25 +1,25 @@
-#include "SwapChain.hpp"
+#include "Swapchain.hpp"
 
 #include <algorithm>
 
 #include "device/PhysicalDevice.hpp"
 #include "device/QueueFamilyIndices.hpp"
-#include "device/SwapChainSupportDetails.hpp"
+#include "device/SwapchainSupportDetails.hpp"
 
-SwapChain::SwapChain( Window& window, Device& device )
-    : window( window ), device( device ), swapChain( VK_NULL_HANDLE ), swapChainImages(),
-      swapChainImageFormat( VK_FORMAT_UNDEFINED ), swapChainExtent( { 0, 0 } )
+Swapchain::Swapchain( Window& window, Device& device )
+    : window( window ), device( device ), swapchain( VK_NULL_HANDLE ), swapchainImages(),
+      swapchainImageFormat( VK_FORMAT_UNDEFINED ), swapchainExtent( { 0, 0 } )
 {
-    SwapChainSupportDetails swapChainSupport = device.getSwapChainSupportDetails();
+    SwapchainSupportDetails swapchainSupport = device.getSwapchainSupportDetails();
 
-    VkSurfaceFormatKHR surfaceFormat = chooseSwapSurfaceFormat( swapChainSupport.formats );
-    VkPresentModeKHR presentMode = chooseSwapPresentMode( swapChainSupport.presentModes );
-    VkExtent2D extent = chooseSwapExtent( swapChainSupport.capabilities );
+    VkSurfaceFormatKHR surfaceFormat = chooseSwapSurfaceFormat( swapchainSupport.formats );
+    VkPresentModeKHR presentMode = chooseSwapPresentMode( swapchainSupport.presentModes );
+    VkExtent2D extent = chooseSwapExtent( swapchainSupport.capabilities );
 
-    uint32_t imageCount = swapChainSupport.capabilities.minImageCount + 1;
-    if( swapChainSupport.capabilities.maxImageCount > 0 && imageCount > swapChainSupport.capabilities.maxImageCount )
+    uint32_t imageCount = swapchainSupport.capabilities.minImageCount + 1;
+    if( swapchainSupport.capabilities.maxImageCount > 0 && imageCount > swapchainSupport.capabilities.maxImageCount )
     {
-        imageCount = swapChainSupport.capabilities.maxImageCount;
+        imageCount = swapchainSupport.capabilities.maxImageCount;
     }
 
     VkSwapchainCreateInfoKHR createInfo = {};
@@ -46,28 +46,28 @@ SwapChain::SwapChain( Window& window, Device& device )
         createInfo.queueFamilyIndexCount = 0;
         createInfo.pQueueFamilyIndices = nullptr;
     }
-    createInfo.preTransform = swapChainSupport.capabilities.currentTransform;
+    createInfo.preTransform = swapchainSupport.capabilities.currentTransform;
     createInfo.compositeAlpha = VK_COMPOSITE_ALPHA_OPAQUE_BIT_KHR;
     createInfo.presentMode = presentMode;
     createInfo.clipped = VK_TRUE;
     createInfo.oldSwapchain = VK_NULL_HANDLE;
 
-    if( vkCreateSwapchainKHR( device, &createInfo, nullptr, &swapChain ) != VK_SUCCESS )
+    if( vkCreateSwapchainKHR( device, &createInfo, nullptr, &swapchain ) != VK_SUCCESS )
     {
         throw std::runtime_error( "failed to create swap chain!" );
     }
 
-    vkGetSwapchainImagesKHR( device, swapChain, &imageCount, nullptr );
-    swapChainImages.resize( imageCount );
-    vkGetSwapchainImagesKHR( device, swapChain, &imageCount, swapChainImages.data() );
+    vkGetSwapchainImagesKHR( device, swapchain, &imageCount, nullptr );
+    swapchainImages.resize( imageCount );
+    vkGetSwapchainImagesKHR( device, swapchain, &imageCount, swapchainImages.data() );
 
-    swapChainImageFormat = surfaceFormat.format;
-    swapChainExtent = extent;
+    swapchainImageFormat = surfaceFormat.format;
+    swapchainExtent = extent;
 }
 
-SwapChain::~SwapChain() { vkDestroySwapchainKHR( device, swapChain, nullptr ); }
+Swapchain::~Swapchain() { vkDestroySwapchainKHR( device, swapchain, nullptr ); }
 
-VkSurfaceFormatKHR SwapChain::chooseSwapSurfaceFormat( const std::vector< VkSurfaceFormatKHR >& availableFormats )
+VkSurfaceFormatKHR Swapchain::chooseSwapSurfaceFormat( const std::vector< VkSurfaceFormatKHR >& availableFormats )
 {
     for( const auto& availableFormat : availableFormats )
     {
@@ -81,7 +81,7 @@ VkSurfaceFormatKHR SwapChain::chooseSwapSurfaceFormat( const std::vector< VkSurf
     return availableFormats[0];
 }
 
-VkPresentModeKHR SwapChain::chooseSwapPresentMode( const std::vector< VkPresentModeKHR >& availablePresentModes )
+VkPresentModeKHR Swapchain::chooseSwapPresentMode( const std::vector< VkPresentModeKHR >& availablePresentModes )
 {
     for( const auto& availablePresentMode : availablePresentModes )
     {
@@ -93,7 +93,7 @@ VkPresentModeKHR SwapChain::chooseSwapPresentMode( const std::vector< VkPresentM
     return VK_PRESENT_MODE_FIFO_KHR;
 }
 
-VkExtent2D SwapChain::chooseSwapExtent( const VkSurfaceCapabilitiesKHR& capabilities )
+VkExtent2D Swapchain::chooseSwapExtent( const VkSurfaceCapabilitiesKHR& capabilities )
 {
     if( capabilities.currentExtent.width != std::numeric_limits< uint32_t >::max() )
     {

@@ -8,16 +8,16 @@
 #include "device/Device.hpp"
 #include "window/Window.hpp"
 
-class SwapChain
+class Swapchain
 {
 public:
-    SwapChain( Window& window, Device& device );
-    ~SwapChain();
+    Swapchain( Window& window, Device& device );
+    ~Swapchain();
 
-    VkSwapchainKHR& getSwapChainRef() { return swapChain; }
-    std::vector< VkImage >& getSwapChainImages() { return swapChainImages; }
-    VkFormat& getSwapChainImageFormat() { return swapChainImageFormat; }
-    VkExtent2D& getSwapChainExtent() { return swapChainExtent; }
+    VkSwapchainKHR& getSwapchainRef() { return swapchain; }
+    std::vector< VkImage >& getSwapchainImages() { return swapchainImages; }
+    VkFormat& getSwapchainImageFormat() { return swapchainImageFormat; }
+    VkExtent2D& getSwapchainExtent() { return swapchainExtent; }
 
 private:
     VkSurfaceFormatKHR chooseSwapSurfaceFormat( const std::vector< VkSurfaceFormatKHR >& availableFormats );
@@ -27,8 +27,8 @@ private:
     Window& window;
     Device& device;
 
-    VkSwapchainKHR swapChain;
-    std::vector< VkImage > swapChainImages;
-    VkFormat swapChainImageFormat;
-    VkExtent2D swapChainExtent;
+    VkSwapchainKHR swapchain;
+    std::vector< VkImage > swapchainImages;
+    VkFormat swapchainImageFormat;
+    VkExtent2D swapchainExtent;
 };

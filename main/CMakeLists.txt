@@ -61,7 +61,7 @@ add_executable(${PROJECT_NAME}
     src/graphicsPipeline/TextureSampler.cpp
     src/main.cpp
     src/presentation/ImageView.cpp
-    src/presentation/SwapChain.cpp
+    src/presentation/Swapchain.cpp
     src/window/DebugMessenger.cpp
     src/window/Instance.cpp
     src/window/Window.cpp
@@ -86,7 +86,7 @@ target_precompile_headers(${PROJECT_NAME} PRIVATE
     src/graphicsPipeline/TextureSampler.hpp
     src/graphicsPipeline/UniformBufferObject.hpp
     src/presentation/ImageView.hpp
-    src/presentation/SwapChain.hpp
+    src/presentation/Swapchain.hpp
     src/window/DebugMessenger.hpp
     src/window/Instance.hpp
     src/window/Window.hpp

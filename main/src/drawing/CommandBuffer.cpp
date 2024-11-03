@@ -45,7 +45,7 @@ void CommandBuffer::recordCommandBuffer( VkCommandBuffer commandBuffer, uint32_t
     renderPassInfo.renderPass = App::get().getRenderPass().getRenderPass();
     renderPassInfo.framebuffer = App::get().getFramebuffers().getFramebuffers()[imageIndex];
     renderPassInfo.renderArea.offset = { 0, 0 };
-    renderPassInfo.renderArea.extent = App::get().getSwapChain().getSwapChainExtent();
+    renderPassInfo.renderArea.extent = App::get().getSwapchain().getSwapchainExtent();
     renderPassInfo.clearValueCount = static_cast< uint32_t >( clearValues.size() );
     renderPassInfo.pClearValues = clearValues.data();
 
@@ -56,15 +56,15 @@ void CommandBuffer::recordCommandBuffer( VkCommandBuffer commandBuffer, uint32_t
     VkViewport viewport{};
     viewport.x = 0.0f;
     viewport.y = 0.0f;
-    viewport.width = static_cast< float >( App::get().getSwapChain().getSwapChainExtent().width );
-    viewport.height = static_cast< float >( App::get().getSwapChain().getSwapChainExtent().height );
+    viewport.width = static_cast< float >( App::get().getSwapchain().getSwapchainExtent().width );
+    viewport.height = static_cast< float >( App::get().getSwapchain().getSwapchainExtent().height );
     viewport.minDepth = 0.0f;
     viewport.maxDepth = 1.0f;
     vkCmdSetViewport( commandBuffer, 0, 1, &viewport );
 
     VkRect2D scissor{};
     scissor.offset = { 0, 0 };
-    scissor.extent = App::get().getSwapChain().getSwapChainExtent();
+    scissor.extent = App::get().getSwapchain().getSwapchainExtent();
     vkCmdSetScissor( commandBuffer, 0, 1, &scissor );
 
     VkBuffer vertexBuffers[] = { App::get().getVertexBuffer().getBuffer() };

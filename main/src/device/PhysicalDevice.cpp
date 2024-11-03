@@ -69,9 +69,9 @@ PhysicalDevice::PhysicalDevice( Window& window, std::set< std::string > required
 
 const QueueFamilyIndices PhysicalDevice::getQueueFamilyIndices() { return findQueueFamilies( physicalDevice, window ); }
 
-const SwapChainSupportDetails PhysicalDevice::getSwapChainSupportDetails()
+const SwapchainSupportDetails PhysicalDevice::getSwapchainSupportDetails()
 {
-    return querySwapChainSupport( physicalDevice );
+    return querySwapchainSupport( physicalDevice );
 }
 
 const VkFormat PhysicalDevice::findSupportedFormat(
@@ -113,15 +113,15 @@ int PhysicalDevice::rateDeviceSuitability( VkPhysicalDevice device, std::set< st
     score += deviceProperties.limits.maxImageDimension2D;
 
     bool extensionsSupported = checkDeviceExtensionSupport( device, requiredExtensions );
-    bool swapChainAdequate = false;
+    bool swapchainAdequate = false;
     if( extensionsSupported )
     {
-        SwapChainSupportDetails swapChainSupport = querySwapChainSupport( device );
-        swapChainAdequate = !swapChainSupport.formats.empty() && !swapChainSupport.presentModes.empty();
+        SwapchainSupportDetails swapchainSupport = querySwapchainSupport( device );
+        swapchainAdequate = !swapchainSupport.formats.empty() && !swapchainSupport.presentModes.empty();
     }
 
     if( !deviceFeatures.geometryShader || !findQueueFamilies( device, window ).isComplete() || !extensionsSupported ||
-        !swapChainAdequate || !deviceFeatures.samplerAnisotropy )
+        !swapchainAdequate || !deviceFeatures.samplerAnisotropy )
     {
         return 0;
     }
@@ -178,9 +178,9 @@ bool PhysicalDevice::checkDeviceExtensionSupport( VkPhysicalDevice device, std::
     return requiredExtensions.empty();
 }
 
-SwapChainSupportDetails PhysicalDevice::querySwapChainSupport( VkPhysicalDevice device )
+SwapchainSupportDetails PhysicalDevice::querySwapchainSupport( VkPhysicalDevice device )
 {
-    SwapChainSupportDetails details;
+    SwapchainSupportDetails details;
 
     vkGetPhysicalDeviceSurfaceCapabilitiesKHR( device, window, &details.capabilities );
 

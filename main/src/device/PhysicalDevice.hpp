@@ -8,7 +8,7 @@
 #include <stdexcept>
 
 #include "QueueFamilyIndices.hpp"
-#include "SwapChainSupportDetails.hpp"
+#include "SwapchainSupportDetails.hpp"
 #include "window/Window.hpp"
 
 class PhysicalDevice
@@ -25,7 +25,7 @@ private:
     operator VkPhysicalDevice&() { return physicalDevice; }
 
     const QueueFamilyIndices getQueueFamilyIndices();
-    const SwapChainSupportDetails getSwapChainSupportDetails();
+    const SwapchainSupportDetails getSwapchainSupportDetails();
     const VkPhysicalDeviceProperties& const getProperties() { return properties; }
     const VkFormat findSupportedFormat(
         const std::vector< VkFormat >& candidates, VkImageTiling tiling, VkFormatFeatureFlags features
@@ -36,7 +36,7 @@ private:
     int rateDeviceSuitability( VkPhysicalDevice device, std::set< std::string >& requiredExtensions );
     static QueueFamilyIndices findQueueFamilies( VkPhysicalDevice& device, Window& window );
     bool checkDeviceExtensionSupport( VkPhysicalDevice device, std::set< std::string >& requiredExtensions );
-    SwapChainSupportDetails querySwapChainSupport( VkPhysicalDevice device );
+    SwapchainSupportDetails querySwapchainSupport( VkPhysicalDevice device );
 
     Window& window;
 

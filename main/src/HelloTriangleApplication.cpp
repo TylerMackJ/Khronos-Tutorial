@@ -23,7 +23,7 @@ void HelloTriangleApplication::constructor()
         std::make_optional< std::vector< const char* > >( validationLayers )
 #endif
     );
-    swapChain = std::make_unique< SwapChain >( *window, *device );
+    swapchain = std::make_unique< Swapchain >( *window, *device );
     createImageViews();
     textureSampler = std::make_unique< TextureSampler >( *device );
     renderPass = std::make_unique< RenderPass >( *device );
@@ -32,11 +32,11 @@ void HelloTriangleApplication::constructor()
     commandPool = std::make_unique< CommandPool >( *device );
     colorImage = std::make_unique< Image >(
         *device,
-        getSwapChain().getSwapChainExtent().width,
-        getSwapChain().getSwapChainExtent().height,
+        getSwapchain().getSwapchainExtent().width,
+        getSwapchain().getSwapchainExtent().height,
         1,
         device->getMSAASamples(),
-        getSwapChain().getSwapChainImageFormat(),
+        getSwapchain().getSwapchainImageFormat(),
         VK_IMAGE_TILING_OPTIMAL,
         VK_IMAGE_USAGE_TRANSIENT_ATTACHMENT_BIT | VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT,
         VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT
@@ -44,8 +44,8 @@ void HelloTriangleApplication::constructor()
     colorImage->createImageView( VK_IMAGE_ASPECT_COLOR_BIT );
     depthImage = std::make_unique< Image >(
         *device,
-        getSwapChain().getSwapChainExtent().width,
-        getSwapChain().getSwapChainExtent().height,
+        getSwapchain().getSwapchainExtent().width,
+        getSwapchain().getSwapchainExtent().height,
         1,
         device->getMSAASamples(),
         findDepthFormat(),
@@ -95,7 +95,7 @@ void HelloTriangleApplication::drawFrame()
     uint32_t imageIndex;
     VkResult result = vkAcquireNextImageKHR(
         *device,
-        getSwapChain().getSwapChainRef(),
+        getSwapchain().getSwapchainRef(),
         UINT64_MAX,
         getSyncObjects().getImageAvailableSemaphores()[currentFrame],
         VK_NULL_HANDLE,
@@ -104,7 +104,7 @@ void HelloTriangleApplication::drawFrame()
 
     if( result == VK_ERROR_OUT_OF_DATE_KHR )
     {
-        recreateSwapChain();
+        recreateSwapchain();
         return;
     }
     else if( result != VK_SUCCESS && result != VK_SUBOPTIMAL_KHR )
@@ -144,9 +144,9 @@ void HelloTriangleApplication::drawFrame()
     presentInfo.sType = VK_STRUCTURE_TYPE_PRESENT_INFO_KHR;
     presentInfo.waitSemaphoreCount = 1;
     presentInfo.pWaitSemaphores = signalSemaphores;
-    VkSwapchainKHR swapChains[] = { getSwapChain().getSwapChainRef() };
+    VkSwapchainKHR swapchains[] = { getSwapchain().getSwapchainRef() };
     presentInfo.swapchainCount = 1;
-    presentInfo.pSwapchains = swapChains;
+    presentInfo.pSwapchains = swapchains;
     presentInfo.pImageIndices = &imageIndex;
     presentInfo.pResults = nullptr;
 
@@ -155,7 +155,7 @@ void HelloTriangleApplication::drawFrame()
     if( result == VK_ERROR_OUT_OF_DATE_KHR || result == VK_SUBOPTIMAL_KHR || window->getFramebufferResized() )
     {
         window->setFramebufferResized( false );
-        recreateSwapChain();
+        recreateSwapchain();
     }
     else if( result != VK_SUCCESS )
     {
@@ -165,7 +165,7 @@ void HelloTriangleApplication::drawFrame()
     currentFrame = ( currentFrame + 1 ) % MAX_FRAMES_IN_FLIGHT;
 }
 
-void HelloTriangleApplication::recreateSwapChain()
+void HelloTriangleApplication::recreateSwapchain()
 {
     int width = 0, height = 0;
     glfwGetFramebufferSize( *window, &width, &height );
@@ -184,17 +184,17 @@ void HelloTriangleApplication::recreateSwapChain()
     {
         imageView.reset();
     }
-    swapChain.reset();
+    swapchain.reset();
 
-    swapChain = std::make_unique< SwapChain >( *window, *device );
+    swapchain = std::make_unique< Swapchain >( *window, *device );
     createImageViews();
     colorImage = std::make_unique< Image >(
         *device,
-        getSwapChain().getSwapChainExtent().width,
-        getSwapChain().getSwapChainExtent().height,
+        getSwapchain().getSwapchainExtent().width,
+        getSwapchain().getSwapchainExtent().height,
         1,
         device->getMSAASamples(),
-        getSwapChain().getSwapChainImageFormat(),
+        getSwapchain().getSwapchainImageFormat(),
         VK_IMAGE_TILING_OPTIMAL,
         VK_IMAGE_USAGE_TRANSIENT_ATTACHMENT_BIT | VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT,
         VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT
@@ -202,8 +202,8 @@ void HelloTriangleApplication::recreateSwapChain()
     colorImage->createImageView( VK_IMAGE_ASPECT_COLOR_BIT );
     depthImage = std::make_unique< Image >(
         *device,
-        getSwapChain().getSwapChainExtent().width,
-        getSwapChain().getSwapChainExtent().height,
+        getSwapchain().getSwapchainExtent().width,
+        getSwapchain().getSwapchainExtent().height,
         1,
         device->getMSAASamples(),
         findDepthFormat(),
@@ -229,7 +229,7 @@ void HelloTriangleApplication::updateUniformBuffer( uint32_t currentImage )
         glm::lookAt( glm::vec3( 2.0f, 2.0f, 2.0f ), glm::vec3( 0.0f, 0.0f, 0.0f ), glm::vec3( 0.0f, 0.0f, 1.0f ) );
     ubo.proj = glm::perspective(
         glm::radians( 45.0f ),
-        getSwapChain().getSwapChainExtent().width / ( float )getSwapChain().getSwapChainExtent().height,
+        getSwapchain().getSwapchainExtent().width / ( float )getSwapchain().getSwapchainExtent().height,
         0.1f,
         10.0f
     );
@@ -249,13 +249,13 @@ VkFormat HelloTriangleApplication::findDepthFormat()
 
 void HelloTriangleApplication::createImageViews()
 {
-    imageViews.resize( getSwapChain().getSwapChainImages().size() );
-    for( size_t i = 0; i < getSwapChain().getSwapChainImages().size(); i++ )
+    imageViews.resize( getSwapchain().getSwapchainImages().size() );
+    for( size_t i = 0; i < getSwapchain().getSwapchainImages().size(); i++ )
     {
         imageViews[i] = std::make_unique< ImageView >(
             *device,
-            getSwapChain().getSwapChainImages()[i],
-            getSwapChain().getSwapChainImageFormat(),
+            getSwapchain().getSwapchainImages()[i],
+            getSwapchain().getSwapchainImageFormat(),
             VK_IMAGE_ASPECT_COLOR_BIT,
             1
         );

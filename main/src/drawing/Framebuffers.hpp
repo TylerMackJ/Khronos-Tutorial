@@ -13,9 +13,9 @@ public:
     Framebuffers( Device& device );
     ~Framebuffers();
 
-    std::vector< VkFramebuffer >& getFramebuffers() { return swapChainFramebuffers; }
+    std::vector< VkFramebuffer >& getFramebuffers() { return swapchainFramebuffers; }
 
 private:
     Device& device;
-    std::vector< VkFramebuffer > swapChainFramebuffers;
+    std::vector< VkFramebuffer > swapchainFramebuffers;
 };

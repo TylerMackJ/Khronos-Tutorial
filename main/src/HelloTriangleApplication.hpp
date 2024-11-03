@@ -20,7 +20,7 @@
 #include "graphicsPipeline/TextureSampler.hpp"
 #include "graphicsPipeline/UniformBufferObject.hpp"
 #include "presentation/ImageView.hpp"
-#include "presentation/SwapChain.hpp"
+#include "presentation/Swapchain.hpp"
 #include "window/Window.hpp"
 
 class HelloTriangleApplication
@@ -63,7 +63,7 @@ private:
     std::unique_ptr< ModelLoader::Model > vikingRoomModel;
     std::unique_ptr< Device > device;
     std::unique_ptr< RenderPass > renderPass;
-    std::unique_ptr< SwapChain > swapChain;
+    std::unique_ptr< Swapchain > swapchain;
     std::unique_ptr< SyncObjects > syncObjects;
     std::unique_ptr< TextureSampler > textureSampler;
     std::unique_ptr< Window > window;
@@ -84,7 +84,7 @@ public:
     Image& getDepthImage() { return *depthImage; }
     ModelLoader::Model& getVikingRoomModel() { return *vikingRoomModel; }
     RenderPass& getRenderPass() { return *renderPass; }
-    SwapChain& getSwapChain() { return *swapChain; }
+    Swapchain& getSwapchain() { return *swapchain; }
     SyncObjects& getSyncObjects() { return *syncObjects; }
     Window& getWindow() { return *window; }
     std::vector< VkDescriptorSet >& getDescriptorSets() { return descriptorSets; }
@@ -111,7 +111,7 @@ public:
 
 private:
     void drawFrame();
-    void recreateSwapChain();
+    void recreateSwapchain();
     void updateUniformBuffer( uint32_t currentImage );
 
     void createImageViews();

@@ -7,7 +7,7 @@
 #include "LogicalDevice.hpp"
 #include "PhysicalDevice.hpp"
 #include "QueueFamilyIndices.hpp"
-#include "SwapChainSupportDetails.hpp"
+#include "SwapchainSupportDetails.hpp"
 #include "window/Window.hpp"
 
 class Device
@@ -27,7 +27,7 @@ public:
     LogicalDevice& getLogicalDevice() { return *logicalDevice; }
 
     const QueueFamilyIndices getQueueFamilyIndices() { return physicalDevice->getQueueFamilyIndices(); }
-    const SwapChainSupportDetails getSwapChainSupportDetails() { return physicalDevice->getSwapChainSupportDetails(); };
+    const SwapchainSupportDetails getSwapchainSupportDetails() { return physicalDevice->getSwapchainSupportDetails(); };
     const VkSampleCountFlagBits& const getMSAASamples() { return physicalDevice->getMSAASamples(); }
     const VkFormat findSupportedFormat(
         const std::vector< VkFormat >& candidates, VkImageTiling tiling, VkFormatFeatureFlags features
